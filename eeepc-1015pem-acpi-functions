@@ -14,31 +14,39 @@ she_toggle() {
 SHE_DIR="/sys/devices/platform/eeepc/cpufv"
 export DISPLAY=:0
 
-case "$(cat $SHE_DIR)" in
-   0x300) #Performance
+if [ ! $1 = "" ] ; then #Se gli passo un argomento
+  case $1 in
+    powersave) echo 2 > $SHE_DIR ;;
+    normal) echo 1 > $SHE_DIR ;;
+    performance) echo 0 > $SHE_DIR ;;
+  esac
+else                        #Toggle ciclico
+  case "$(cat $SHE_DIR)" in
+    0x300) #Performance
       echo 2 > $SHE_DIR
       new="Performance"
       old="Normal"
       notify she
-      ;;
-   0x301) #Normal
+    ;;
+    0x301) #Normal
       echo 0 > $SHE_DIR
       new="Normal"
       old="Powersave"
       notify she
-      ;;
-   0x302) #Powersave
+    ;;
+    0x302) #Powersave
       echo 1 > $SHE_DIR
       new="Powersave"
       old="Performance"
       notify she
-      ;;
-   *)
+    ;;
+    *)
       echo 1 > $SHE_DIR
       old=""
       notify she
-      ;;
-esac
+    ;;
+  esac
+fi
 }
 
 
