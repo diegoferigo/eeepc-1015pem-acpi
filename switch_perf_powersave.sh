@@ -45,6 +45,9 @@ case "$1" in
 
        # Minimize the number of processor packages and CPU cores carrying the process load
         # echo 1 > /sys/devices/system/cpu/sched_smt_power_saving
+
+       # Disable NMI watchdog
+         echo 0 > /proc/sys/kernel/nmi_watchdog
     ;;
 
     performance)
@@ -70,6 +73,7 @@ case "$1" in
            done
          done
 	 #echo 0 > /sys/devices/system/cpu/sched_smt_power_savings
+	 echo 1 > /proc/sys/kernel/nmi_watchdog
     ;;
 esac
 
