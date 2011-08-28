@@ -3,7 +3,6 @@
 notify() {
 . /etc/conf.d/eeepc-1015pem-acpi.conf
 if [ $NOTIFY = "yes" ] ; then
-  echo $NOTIFY_PROG
   case $1 in
     touchpad) su $USER -c "$NOTIFY_PROG 'Touchpad:' '$touch_not'" ;;
     she) su $USER -c "$NOTIFY_PROG 'SHE:' '$old --> $new'" ;;
