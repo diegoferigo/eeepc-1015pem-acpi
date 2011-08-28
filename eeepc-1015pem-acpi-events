@@ -1,0 +1,2 @@
+event=.*
+action=/etc/acpi/eeepc-1015pem-acpi-handler.sh %e
