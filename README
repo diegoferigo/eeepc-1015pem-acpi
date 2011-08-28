@@ -1,21 +1,43 @@
 Collection of script to manage the hotkeys of the Asus Eeepc 1015pem.
 
+PACKAGE REQUIRED:
+- libnotify: notification support in gtk systems
+- kdialog: notification support in qt systems
+- cpufreq: to switch the cpu frequencies
+
+Obviouly you need a kernel that supports frequencies switch
+
+##############################################################################
+
 INSTALL:
 
 git clone git://github.com/dieghen89/eeepc-1015pem-acpi.git
 cd eeepc-1015pem-acpi
 sudo sh install.sh
 
+----------------------------------
+
+Optional: 
+
+sudo sh install --no-cpufreq
+
+if you have already cpufreq working with ondemand/conservative/powersave/performance governor
+
+##############################################################################
+
 CONFIGURE:
 
 You can find the configuration file in: /etc/conf.d/eeepc-1015pem-acpi.conf
+
+##############################################################################
 
 REMOVE:
 
 sh install.sh --uninstall
 
+##############################################################################
+##############################################################################
 
---------------------------------------------------------------
 Credits to:
 
 - nbigaouette acpi-eeepc-generic project: 
