@@ -19,9 +19,9 @@ sudo sh install.sh
 
 Optional: 
 
-sudo sh install --no-cpufreq
+sudo sh install --cpufreq
 
-if you have already cpufreq working with ondemand/conservative/powersave/performance governor
+if you need the cpufreq configuration file (useful for manual governor switch)
 
 ##############################################################################
 
