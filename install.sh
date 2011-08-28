@@ -12,7 +12,7 @@ echo -e ""
 echo -e "Usage: $0 [option]"
 echo -e ""
 echo -e "Options:"
-#echo -e "--prefix=DIR	To install the files in DIR directory"  #TODO
+echo -e "--cpufreq	If you need a cpufreq conf"
 echo -e "--uninstall	To remove all script in you file system"
 echo -e ""
 exit 0
@@ -22,8 +22,8 @@ exit 0
 UNINSTALL="n"
 if [ ! $1 = "" ] ; then
   case $1 in
-  #  --prefix=*)  ;;    #TODO
     --uninstall) UNINSTALL="y" ;;
+    --cpufreq) CPUFREQ="y" ;;
     *) help ;;
   esac
 fi
@@ -36,6 +36,9 @@ if [ ! $UNINSTALL = "y" ] ; then
     echo -e ">>"
   else
     install -m 755 -D eeepc-1015pem-acpi.conf /etc/conf.d/eeepc-1015pem-acpi.conf && echo -e "Installed eeepc-1015pem-acpi.conf"
+  fi
+  if [ $CPUFREQ = "y" ] ; then
+    install -m 755 -D cpufreq /etc/conf.d/cpufreq && echo -e "Installed cpufreq conf file"
   fi
   install -m 755 -D eeepc-1015pem-acpi-handler.sh /etc/acpi/eeepc-1015pem-acpi-handler.sh && echo -e "Installed eeepc-1015pem-acpi-handler.sh"
   install -m 755 -D eeepc-1015pem-acpi-functions /etc/acpi/eeepc/eeepc-1015pem-acpi-functions && echo -e "Installed eeepc-1015pem-acpi-functions"
