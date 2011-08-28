@@ -1,0 +1,34 @@
+. /etc/conf.d/eeepc-1015pem-acpi.conf
+
+she_toggle() {
+
+SHE_DIR="/sys/devices/platform/eeepc/cpufv"
+export DISPLAY=:0
+
+case "$(cat $she)" in
+   0x300)
+      echo 2 > $SHE_DIR
+      ;;
+   0x301)
+      echo 0 > $SHE_DIR
+      ;;
+   0x302)
+      echo 1 > $SHE_DIR
+      ;;
+   *)
+      echo 1 > $SHE_DIR
+      ;;
+esac
+}
+
+
+touchpad_toggle() {
+
+TOUCH_STATUS=`synclient | grep TouchpadOff | awk '{print $3}'`
+
+if [ $TOUCH_STATUS = 0 ] ; then
+  synclient TouchpadOff=1
+else
+  synclient TouchpadOff=0
+fi
+}
