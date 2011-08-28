@@ -62,13 +62,19 @@ case "$1" in
         ;;
     ac_adapter)
         case "$2" in
-            AC|ACAD|ADP0)
+            AC|AC0|ACAD|ADP0)
                 case "$4" in
                     00000000) # Rimosso
                         $ACTION_AC_UNPLUG
+			for i in 0 1 2 3 ; do
+           		  echo "conservative" > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
+         		done
                     ;;
                     00000001) # Attaccato
                         $ACTION_AC_PLUG
+			for i in 0 1 2 3 ; do
+           		  echo "ondemand" > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
+         		done
                     ;;
                 esac
             ;;
