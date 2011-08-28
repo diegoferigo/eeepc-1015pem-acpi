@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with acpi-eeepc-generic.  If not, see <http://www.gnu.org/licenses/>.
 
+. /etc/conf.d/eeepc-1015pem-acpi.conf
+
 KEY_Fn_F1="00000080"    # Sleep
 KEY_Fn_F2=("00000010" "00000011") # Wifi toggle
 KEY_Fn_F3="00000037"    # Touchpad
@@ -38,9 +40,9 @@ BRIGHTNESS_DOWN=$KEY_Fn_F6
 SCREEN_OFF=$KEY_Fn_F7
 RANDR_TOGGLE=${KEY_Fn_F8[0]}
 TASK=$KEY_Fn_F9
-EEEPC_VOL_MUTE=$KEY_Fn_F10
-EEEPC_VOL_DOWN=$KEY_Fn_F11
-EEEPC_VOL_UP=$KEY_Fn_F12
+VOL_MUTE=$KEY_Fn_F10
+VOL_DOWN=$KEY_Fn_F11
+VOL_UP=$KEY_Fn_F12
 
 #########################################
 #########################################
@@ -48,12 +50,12 @@ EEEPC_VOL_UP=$KEY_Fn_F12
 case "$1" in
     button/power)
         case "$2" in
-            PBTN|PWRF)  # "PowerButton pressed ;;
+            PBTN|PWRF)  $ACTION_POWER_BUTTON ;;
         esac
         ;;
     button/sleep)
         case "$2" in
-            SLPB)   echo -n mem >/sys/power/state ;;
+            SLPB)   $ACTION_SLEEP ;;
             *)      logger "ACPI action undefined: $2" ;;
         esac
         ;;
@@ -62,10 +64,10 @@ case "$1" in
             AC|ACAD|ADP0)
                 case "$4" in
                     00000000) # Rimosso
-                        #Avvia script powersave
+                        $ACTION_AC_UNPLUG
                     ;;
                     00000001) # Attaccato
-                        #Avvia script performance
+                        $ACTION_AC_PLUG
                     ;;
                 esac
                 ;;
@@ -82,28 +84,28 @@ case "$1" in
 
 	case "$lidstate" in
         open)
-		xset dpms force on
+		$ACTION_SCREEN_OPEN
 	;;
 	closed)
-		xset dpms force off
+		$ACTION_SCREEN_CLOSED
         ;;
     ;;
 
     hotkey)
 	case $3 in
-		SHE_TOGGLE)
-		SLEEP)
-		WIFI_TOGGLE)
-		TOUCHPAD_TOGGLE)
-		ROTATE)
-		BRIGHTNESS_UP)
-		BRIGHTNESS_DOWN)
-		SCREEN_OFF)
-		RANDR_TOGGLE)
-		TASK)
-		EEEPC_VOL_MUTE)
-		EEEPC_VOL_DOWN)
-		EEEPC_VOL_UP)
+		SHE_TOGGLE) $ACTION_SHE_TOGGLE ;;
+		SLEEP) $ACTION_SLEEP ;;
+		WIFI_TOGGLE) $ACTION_WIFI_TOGGLE ;;
+		TOUCHPAD_TOGGLE) $ACTION_TOUCHPAD_TOGGLE ;;
+		ROTATE) $ACTION_ROTATE ;;
+		BRIGHTNESS_UP) $ACTION_BRIGHTNESS_UP ;;
+		BRIGHTNESS_DOWN) $ACTION_BRIGHTNESS_DOWN ;;
+		SCREEN_OFF) $ACTION_SCREEN_OFF ;;
+		RANDR_TOGGLE) $ACTION_RANDR_TOGGLE ;;
+		TASK) $ACTION_TASK ;;
+		VOL_MUTE) $ACTION_VOL_MUTE ;;
+		VOL_DOWN) $ACTION_VOL_DOWN ;;
+		VOL_UP) $ACTION_VOL_UP ;;
     ;;
     *)
         logger "ACPI group/action undefined: $1 / $2"
