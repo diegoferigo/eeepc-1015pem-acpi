@@ -1,0 +1,17 @@
+#configuration for cpufreq control
+
+# valid governors:
+#  ondemand, performance, powersave,
+#  conservative, userspace
+governor="ondemand"
+governor="performance"
+governor="conservative"
+governor="powersave"
+
+# limit frequency range (optional)
+# valid suffixes: Hz, kHz (default), MHz, GHz, THz
+min_freq="1000MHz"
+max_freq="1.50GHz"
+
+# use freq to set up the exact cpu frequency using it with userspace governor
+#freq=
