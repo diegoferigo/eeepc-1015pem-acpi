@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Copyright 2011 Diego Ferigo
 #
 # eeepc-1015pem-acpi is free software: you can redistribute it and/or modify
@@ -70,7 +70,7 @@ case "$1" in
                         $ACTION_AC_PLUG
                     ;;
                 esac
-                ;;
+            ;;
             *)  logger "ACPI action undefined: $2" ;;
         esac
         ;;
@@ -83,12 +83,13 @@ case "$1" in
             lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
 
 	case "$lidstate" in
-        open)
+          open)
 		$ACTION_SCREEN_OPEN
-	;;
-	closed)
+	  ;;
+	  closed)
 		$ACTION_SCREEN_CLOSED
-        ;;
+          ;;
+	esac
     ;;
 
     hotkey)
@@ -106,6 +107,7 @@ case "$1" in
 		VOL_MUTE) $ACTION_VOL_MUTE ;;
 		VOL_DOWN) $ACTION_VOL_DOWN ;;
 		VOL_UP) $ACTION_VOL_UP ;;
+	esac
     ;;
     *)
         logger "ACPI group/action undefined: $1 / $2"
