@@ -10,70 +10,78 @@ buslist="pci i2c"
 
 case "$1" in
     powersave)
-       # Enable laptop mode
-         echo 5 > /proc/sys/vm/laptop_mode
+	# Enable laptop mode
+	echo 5 > /proc/sys/vm/laptop_mode
 
-       # Less VM disk activity. Suggested by powertop
-         echo 1500 > /proc/sys/vm/dirty_writeback_centisecs
+	# Less VM disk activity. Suggested by powertop
+	echo 1500 > /proc/sys/vm/dirty_writeback_centisecs
 
-       # Intel power saving
-         echo Y > /sys/module/snd_hda_intel/parameters/power_save_controller
-         echo 1 > /sys/module/snd_hda_intel/parameters/power_save
+	# Intel power saving
+	echo Y > /sys/module/snd_hda_intel/parameters/power_save_controller 
+	echo 1 > /sys/module/snd_hda_intel/parameters/power_save
 
-       # USB powersaving
-         for i in /sys/bus/usb/devices/*/power/autosuspend; do
-           echo 1 > $i
-         done
+	# USB powersaving
+	for i in /sys/bus/usb/devices/*/power/autosuspend; do
+	  echo 1 > $i 
+	done
 
-       # SATA power saving
-         for i in /sys/class/scsi_host/host*/link_power_management_policy; do
-           echo min_power > $i
-         done
+	# SATA power saving
+	for i in /sys/class/scsi_host/host*/link_power_management_policy; do
+	  echo min_power > $i
+	done
 
-       # Disable hardware modules to save power
-         for mod in $modlist; do
-           grep $mod /proc/modules >/dev/null || continue
-           modprobe -r $mod 2>/dev/null
-         done
+	# Disable hardware modules to save power
+	for mod in $modlist; do
+	  grep $mod /proc/modules >/dev/null || continue
+	  modprobe -r $mod 2>/dev/null
+	done
 
-       # Enable runtime power management. Suggested by powertop.
-         for bus in $buslist; do
-           for i in /sys/bus/$bus/devices/*/power/control; do
-             echo auto > $i
-           done
-         done
+	# Enable runtime power management. Suggested by powertop.
+	for bus in $buslist; do
+	  for i in /sys/bus/$bus/devices/*/power/control; do
+	    echo auto > $i
+	  done
+	done
 
-       # Minimize the number of processor packages and CPU cores carrying the process load
-        # echo 1 > /sys/devices/system/cpu/sched_smt_power_saving
+	# Minimize the number of processor packages and CPU cores carrying the process load
+	if [ -e /sys/devices/system/cpu/sched_smt_power_saving ] ; then
+	  echo 1 > /sys/devices/system/cpu/sched_smt_power_saving
+	fi
 
-       # Disable NMI watchdog
-         echo 0 > /proc/sys/kernel/nmi_watchdog
+	# Disable NMI watchdog
+	if [ -e /proc/sys/kernel/nmi_watchdog ] ; then
+	  echo 0 > /proc/sys/kernel/nmi_watchdog
+	fi
     ;;
 
     performance)
-       #Return settings to default on AC power
-         echo 0 > /proc/sys/vm/laptop_mode
-         echo 500 > /proc/sys/vm/dirty_writeback_centisecs
-         echo N > /sys/module/snd_hda_intel/parameters/power_save_controller
-         echo 0 > /sys/module/snd_hda_intel/parameters/power_save
-         for i in /sys/bus/usb/devices/*/power/autosuspend; do
-           echo 2 > $i
-         done
-         for i in /sys/class/scsi_host/host*/link_power_management_policy
-           do echo max_performance > $i
-         done
-         for mod in $modlist; do
-           if ! lsmod | grep $mod; then
-             modprobe $mod 2>/dev/null
-           fi
-         done
-         for bus in $buslist; do
-           for i in /sys/bus/$bus/devices/*/power/control; do
-             echo on > $i
-           done
-         done
-	 #echo 0 > /sys/devices/system/cpu/sched_smt_power_savings
-	 echo 1 > /proc/sys/kernel/nmi_watchdog
+	#Return settings to default on AC power
+	echo 0 > /proc/sys/vm/laptop_mode
+	echo 500 > /proc/sys/vm/dirty_writeback_centisecs
+	echo N > /sys/module/snd_hda_intel/parameters/power_save_controller
+	echo 0 > /sys/module/snd_hda_intel/parameters/power_save
+	for i in /sys/bus/usb/devices/*/power/autosuspend; do
+	  echo 2 > $i
+	done
+	for i in /sys/class/scsi_host/host*/link_power_management_policy
+	  do echo max_performance > $i
+	done
+	for mod in $modlist; do
+	  if ! lsmod | grep $mod; then
+	    modprobe $mod 2>/dev/null
+	  fi
+	done
+	for bus in $buslist; do
+	  for i in /sys/bus/$bus/devices/*/power/control; do
+	    echo on > $i
+	  done
+	done
+	if [ -e /sys/devices/system/cpu/sched_smt_power_savings ] ; then
+	  echo 0 > /sys/devices/system/cpu/sched_smt_power_savings
+	fi
+	if [ -e /proc/sys/kernel/nmi_watchdog ] ; then
+	  echo 1 > /proc/sys/kernel/nmi_watchdog
+	fi
     ;;
 esac
 
