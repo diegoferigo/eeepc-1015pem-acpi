@@ -5,14 +5,14 @@ she_toggle() {
 SHE_DIR="/sys/devices/platform/eeepc/cpufv"
 export DISPLAY=:0
 
-case "$(cat $she)" in
-   0x300)
+case "$(cat $SHE_DIR)" in
+   0x300) #Performance
       echo 2 > $SHE_DIR
       ;;
-   0x301)
+   0x301) #Normal
       echo 0 > $SHE_DIR
       ;;
-   0x302)
+   0x302) #Powersave
       echo 1 > $SHE_DIR
       ;;
    *)
