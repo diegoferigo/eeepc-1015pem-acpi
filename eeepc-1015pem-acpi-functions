@@ -2,10 +2,11 @@
 
 notify() {
 . /etc/conf.d/eeepc-1015pem-acpi.conf
-if [ $NOTIFY = "y" ] ; then
+if [ $NOTIFY = "yes" ] ; then
+  echo $NOTIFY_PROG
   case $1 in
-    touchpad) su $USER -c "notify-send 'Touchpad:' '$touch_not'" ;;
-    she) su $USER -c "notify-send 'SHE:' '$old --> $new'" ;;
+    touchpad) su $USER -c "$NOTIFY_PROG 'Touchpad:' '$touch_not'" ;;
+    she) su $USER -c "$NOTIFY_PROG 'SHE:' '$old --> $new'" ;;
   esac
 fi
 }
