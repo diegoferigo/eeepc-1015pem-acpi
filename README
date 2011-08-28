@@ -15,3 +15,14 @@ REMOVE:
 sh install.sh --uninstall
 
 
+--------------------------------------------------------------
+Credits to:
+
+- nbigaouette acpi-eeepc-generic project: 
+	https://github.com/nbigaouette/acpi-eeepc-generic
+- cruchbang powersave script: 
+	http://crunchbanglinux.org/forums/topic/11954
+- Melko: 
+	http://linux4netbook.blogspot.com/2010/10/howto-creiamoci-i-nostri-script-acpi.html
+- LessWatts: 
+	http://www.lesswatts.org/tips/ 
