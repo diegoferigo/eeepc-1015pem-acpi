@@ -1,11 +1,12 @@
 Collection of script to manage the hotkeys of the Asus Eeepc 1015pem.
 
-PACKAGE REQUIRED:
+REQUIRED PACKAGES:
 - libnotify: notification support in gtk systems
 - kdialog: notification support in qt systems
-- cpufreq: to switch the cpu frequencies
+- a kernel that supports frequency scaling
 
-Obviouly you need a kernel that supports frequencies switch
+OPTIONAL PACKAGES:
+- cpufrequtils: manually switch the cpu frequencies
 
 ##############################################################################
 
@@ -17,7 +18,7 @@ sudo sh install.sh
 
 ----------------------------------
 
-Optional: 
+Optional:
 
 sudo sh install --cpufreq
 
