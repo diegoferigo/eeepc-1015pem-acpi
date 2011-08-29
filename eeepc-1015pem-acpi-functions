@@ -1,7 +1,7 @@
 #!/bin/bash
+. /etc/conf.d/eeepc-1015pem-acpi.conf
 
 notify() {
-. /etc/conf.d/eeepc-1015pem-acpi.conf
 if [ $NOTIFY = "yes" ] ; then
   case $1 in
     touchpad) su $USER -c "$NOTIFY_PROG 'Touchpad:' '$touch_not'" ;;
@@ -14,13 +14,7 @@ she_toggle() {
 SHE_DIR="/sys/devices/platform/eeepc/cpufv"
 export DISPLAY=:0
 
-if [ ! $1 = "" ] ; then #Se gli passo un argomento
-  case $1 in
-    powersave) echo 2 > $SHE_DIR ;;
-    normal) echo 1 > $SHE_DIR ;;
-    performance) echo 0 > $SHE_DIR ;;
-  esac
-else                        #Toggle ciclico
+if [ a$1 = "a" ] ; then
   case "$(cat $SHE_DIR)" in
     0x300) #Performance
       echo 2 > $SHE_DIR
@@ -45,6 +39,12 @@ else                        #Toggle ciclico
       old=""
       notify she
     ;;
+  esac
+else
+  case $1 in
+    powersave) echo 2 > $SHE_DIR ;;
+    normal) echo 1 > $SHE_DIR ;;
+    performance) echo 0 > $SHE_DIR ;;
   esac
 fi
 }
