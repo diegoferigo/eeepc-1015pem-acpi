@@ -2,7 +2,7 @@
 . /etc/conf.d/eeepc-1015pem-acpi.conf
 
 notify() {
-if [ $NOTIFY = "yes" ] ; then
+if [ ! a$NOTIFY_DE = "a" ] ; then
   case $1 in
     if [ $NOTIFY_DE = "gtk" ] ; then
       touchpad) su $USER -c "notify-send 'Touchpad' '$touch_not'" ;;
@@ -10,6 +10,9 @@ if [ $NOTIFY = "yes" ] ; then
     else if [ $NOTIFY_DE = "qt" ] ; then
       touchpad) su $USER -c "kdialog --passivepopup '$touch_not' --title 'Touchpad'"
       she) su $USER -c "kdialog --passivepopup '$old --> $new' --title 'SHE:'"
+    else
+      echo -e "You have setted a wrong value in conf file!"
+      exit 1
     fi
   esac
 fi
