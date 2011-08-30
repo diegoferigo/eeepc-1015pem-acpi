@@ -4,20 +4,14 @@
 # Function used to send a notification, checking the
 # conf file, to choose the right notification system
 notify() {
-if [ ! a$NOTIFY_DE = "a" ] ; then
   case $1 in
-    if [ $NOTIFY_DE = "gtk" ] ; then
-      touchpad) su $USER -c "notify-send 'Touchpad' '$touch_not'" ;;
-      she) su $USER -c "notify-send 'SHE:' '$old --> $new'" ;;
-    else if [ $NOTIFY_DE = "qt" ] ; then
-      touchpad) su $USER -c "kdialog --passivepopup '$touch_not' --title 'Touchpad'"
-      she) su $USER -c "kdialog --passivepopup '$old --> $new' --title 'SHE:'"
-    else
-      echo -e "You have setted a wrong value in conf file!"
-      exit 1
-    fi
+      touchpad) [ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'Touchpad' '$touch_not'"
+		[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$touch_not' --title 'Touchpad'"
+      ;;
+      she)	[ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'SHE:' '$old --> $new'"
+    		[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$old --> $new' --title 'SHE:'"
+      ;;
   esac
-fi
 }
 
 # Function to toggle the FSB clock through
