@@ -1,6 +1,8 @@
 #!/bin/bash
 . /etc/conf.d/eeepc-1015pem-acpi.conf
 
+# Function used to send a notification, checking the
+# conf file, to choose the right notification system
 notify() {
 if [ ! a$NOTIFY_DE = "a" ] ; then
   case $1 in
@@ -18,6 +20,8 @@ if [ ! a$NOTIFY_DE = "a" ] ; then
 fi
 }
 
+# Function to toggle the FSB clock through
+# the Asus Super Hybrid Engine
 she_toggle() {
 SHE_DIR="/sys/devices/platform/eeepc/cpufv"
 export DISPLAY=:0
@@ -57,7 +61,7 @@ else
 fi
 }
 
-
+#Function to toggle the touchpad, via synclient (xf86-input-synaptics)
 touchpad_toggle() {
 TOUCH_STATUS=`synclient | grep TouchpadOff | awk '{print $3}'`
 
