@@ -73,6 +73,7 @@ if [ a$1 = "a" ] ; then
     ;;
     *)
       echo 1 > $SHE_DIR
+      new="Normal"
       old=""
       notify she
     ;;
@@ -101,12 +102,10 @@ if [ $TOUCH_STATUS = 0 ] ; then
   synclient TouchpadOff=1
   touch_not="disabled"
   notify touchpad
-  #echo -e "$touchlog $touch_not" >> $logfile
 else
   synclient TouchpadOff=0
   touch_not="enabled"
   notify touchpad
-  #echo -e "$touchlog" >> $logfile
 fi
 echo -e "$touchlog $touch_not" >> $logfile
 }
