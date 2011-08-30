@@ -4,8 +4,13 @@
 notify() {
 if [ $NOTIFY = "yes" ] ; then
   case $1 in
-    touchpad) su $USER -c "$NOTIFY_PROG 'Touchpad:' '$touch_not'" ;;
-    she) su $USER -c "$NOTIFY_PROG 'SHE:' '$old --> $new'" ;;
+    if [ $NOTIFY_DE = "gtk" ] ; then
+      touchpad) su $USER -c "notify-send 'Touchpad' '$touch_not'" ;;
+      she) su $USER -c "notify-send 'SHE:' '$old --> $new'" ;;
+    else if [ $NOTIFY_DE = "qt" ] ; then
+      touchpad) su $USER -c "kdialog --passivepopup '$touch_not' --title 'Touchpad'"
+      she) su $USER -c "kdialog --passivepopup '$old --> $new' --title 'SHE:'"
+    fi
   esac
 fi
 }
