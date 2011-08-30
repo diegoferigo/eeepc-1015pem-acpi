@@ -1,9 +1,40 @@
 #!/bin/bash
 . /etc/conf.d/eeepc-1015pem-acpi.conf
 
+#Set the logfile position and the date format
+logfile="/var/log/eeepc-acpi.log"
+logdate="$(date +'[%d-%m-%y %k:%M]')"
+
+#If the file doesn't exist
+if [ ! -e $logfile ] ; then
+  echo -e "#This is the log of eeepc-1015pem-acpi" > $logfile
+  echo -e "#" >> $logfile
+  echo -e "" >> $logfile
+fi
+
+#If the file is larger than 4MB
+if [ "$(stat -c %s $logfile)" -gt "4194304" ] ; then
+  rm /var/log/eeepc-acpi.log
+fi
+
+
+# Function to set the right user if not set in the conf file
+user() {
+  if [ "a$USER" = "a" ] ; then
+    if [ "$(who | wc -l)" = "1" ] ; then
+      USER="$(who | awk '{print $1}')"
+    else
+      echo -e "$logdate [WW] You have more than one user logged in!" >> $logfile
+      echo -e "$logdate [WW] Please set your user name in" >> $logfile
+      echo -e "$logdate [WW] /etc/conf.d/eeepc-1015pem-acpi.conf" >> $logfile
+    fi
+  fi
+}
+
 # Function used to send a notification, checking the
 # conf file, to choose the right notification system
 notify() {
+  user
   case $1 in
       touchpad) [ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'Touchpad' '$touch_not'"
 		[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$touch_not' --title 'Touchpad'"
@@ -46,26 +77,36 @@ if [ a$1 = "a" ] ; then
       notify she
     ;;
   esac
+  echo -e "$logdate SHE: $old --> $new" >> $logfile
 else
   case $1 in
-    powersave) echo 2 > $SHE_DIR ;;
-    normal) echo 1 > $SHE_DIR ;;
-    performance) echo 0 > $SHE_DIR ;;
+    powersave) echo 2 > $SHE_DIR
+    ;;
+    normal) echo 1 > $SHE_DIR
+    ;;
+    performance) echo 0 > $SHE_DIR
+    ;;
   esac
+  echo -e "$logdate SHE: --> $1 ; Automatic switch" >> $logfile
 fi
+
 }
 
 #Function to toggle the touchpad, via synclient (xf86-input-synaptics)
 touchpad_toggle() {
 TOUCH_STATUS=`synclient | grep TouchpadOff | awk '{print $3}'`
+touchlog="$logdate Touchpad"
 
 if [ $TOUCH_STATUS = 0 ] ; then
   synclient TouchpadOff=1
   touch_not="disabled"
   notify touchpad
+  #echo -e "$touchlog $touch_not" >> $logfile
 else
   synclient TouchpadOff=0
   touch_not="enabled"
   notify touchpad
+  #echo -e "$touchlog" >> $logfile
 fi
+echo -e "$touchlog $touch_not" >> $logfile
 }
