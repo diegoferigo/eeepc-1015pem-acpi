@@ -3,6 +3,7 @@ Collection of script to manage the hotkeys of the Asus Eeepc 1015pem and models 
 REQUIRED PACKAGES:
 - libnotify: notification support in gtk systems
 - kdialog: notification support in qt systems
+- dmidecode: check model in install script
 - a kernel that supports frequency scaling
 
 CONFIG_CPU_FREQ

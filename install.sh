@@ -7,6 +7,13 @@ if [ $(whoami) != "root" ] ; then
   exit 0
 fi
 
+if [ "$(dmidecode -s system-product-name)" != "1015PEM" ] ; then
+  echo -e ">>"
+  echo -e ">> You have an unsupported model!"
+  echo -e ">>"
+  exit 1
+fi
+
 help() {
 echo -e ""
 echo -e "Usage: $0 [option]"
