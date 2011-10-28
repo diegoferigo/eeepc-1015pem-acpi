@@ -54,9 +54,9 @@ if [ ! "$UNINSTALL" = "y" ] ; then
   install -m 755 -D eeepc-1015pem-acpi-events \
 		/etc/acpi/events/eeepc-1015pem-acpi-events \
 		&& echo -e "Installed eeepc-1015pem-acpi-events"
-  install -m 755 -D switch_perf_powersave.sh \
-		/etc/acpi/eeepc/switch_perf_powersave.sh \
-		&& echo -e "Installed switch_perf_powersave.sh"
+  install -m 755 -D eeepc-sys_proc_tweaks.sh \
+		/etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh \
+		&& echo -e "Installed eeepc-sys_proc_tweaks.sh"
   install -m 755 -D eeepc-bootup.sh \
 		/usr/bin/eeepc-bootup.sh \
 		&& echo -e "Installed eeepc-bootup.sh"
@@ -66,6 +66,6 @@ else
   rm /etc/acpi/eeepc-1015pem-acpi-handler.sh && echo -e "Removed eeepc-1015pem-acpi-handler.sh"
   rm /etc/acpi/eeepc/eeepc-1015pem-acpi-functions && echo -e "Removed eeepc-1015pem-acpi-functions"
   rm /etc/acpi/events/eeepc-1015pem-acpi-events && echo -e "Removed eeepc-1015pem-acpi-events"
-  rm /etc/acpi/eeepc/switch_perf_powersave.sh && echo -e "Removed switch_perf_powersave.sh"
+  rm /etc/acpi/eeepc/switch_perf_powersave.sh && echo -e "Removed eeepc-sys_proc_tweaks.sh"
   rm /usr/bin/eeepc-bootup.sh
 fi
