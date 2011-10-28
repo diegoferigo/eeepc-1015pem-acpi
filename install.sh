@@ -57,6 +57,9 @@ if [ ! "$UNINSTALL" = "y" ] ; then
   install -m 755 -D switch_perf_powersave.sh \
 		/etc/acpi/eeepc/switch_perf_powersave.sh \
 		&& echo -e "Installed switch_perf_powersave.sh"
+  install -m 755 -D eeepc-bootup.sh \
+		/usr/bin/eeepc-bootup.sh \
+		&& echo -e "Installed eeepc-bootup.sh"
 
 else
   rm /etc/conf.d/eeepc-1015pem-acpi.conf && echo -e "Removed eeepc-1015pem-acpi.conf"
@@ -64,4 +67,5 @@ else
   rm /etc/acpi/eeepc/eeepc-1015pem-acpi-functions && echo -e "Removed eeepc-1015pem-acpi-functions"
   rm /etc/acpi/events/eeepc-1015pem-acpi-events && echo -e "Removed eeepc-1015pem-acpi-events"
   rm /etc/acpi/eeepc/switch_perf_powersave.sh && echo -e "Removed switch_perf_powersave.sh"
+  rm /usr/bin/eeepc-bootup.sh
 fi
