@@ -6,13 +6,13 @@
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# acpi-eeepc-generic is distributed in the hope that it will be useful,
+# eeepc-1015pem-acpi is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with acpi-eeepc-generic.  If not, see <http://www.gnu.org/licenses/>.
+# along with eeepc-1015pem-acpi.  If not, see <http://www.gnu.org/licenses/>.
 
 . /etc/conf.d/eeepc-1015pem-acpi.conf
 . /etc/acpi/eeepc/eeepc-1015pem-acpi-functions
