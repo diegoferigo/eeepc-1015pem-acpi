@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Check if i have root access
 if [ $(whoami) != "root" ] ; then
   echo -e ">>"
   echo -e ">> You must be root to use this script"
@@ -7,6 +8,7 @@ if [ $(whoami) != "root" ] ; then
   exit 0
 fi
 
+# Is a supported model?
 if [ "$(dmidecode -s system-product-name)" != "1015PEM" ] ; then
   echo -e ">>"
   echo -e ">> You have an unsupported model!"
@@ -14,6 +16,7 @@ if [ "$(dmidecode -s system-product-name)" != "1015PEM" ] ; then
   exit 1
 fi
 
+# Help function:
 help() {
 echo -e ""
 echo -e "Usage: $0 [option]"
@@ -24,7 +27,7 @@ echo -e ""
 exit 0
 }
 
-
+# Parse stdin:
 UNINSTALL="n"
 if [ ! $1 = "" ] ; then
 case $1 in
@@ -33,7 +36,9 @@ case $1 in
   esac
 fi
 
+
 if [ ! "$UNINSTALL" = "y" ] ; then
+# Conf file
   if [ -e /etc/conf.d/eeepc-1015pem-acpi.conf ] ; then
     install -m 755 -D eeepc-1015pem-acpi.conf /etc/conf.d/eeepc-1015pem-acpi.conf.new
     echo -e ">>"
@@ -45,6 +50,7 @@ if [ ! "$UNINSTALL" = "y" ] ; then
 		&& echo -e "Installed eeepc-1015pem-acpi.conf"
   fi
 
+# Other files
   install -m 755 -D eeepc-1015pem-acpi-handler.sh \
 		/etc/acpi/eeepc-1015pem-acpi-handler.sh  \
 		&& echo -e "Installed eeepc-1015pem-acpi-handler.sh"
@@ -60,12 +66,17 @@ if [ ! "$UNINSTALL" = "y" ] ; then
   install -m 755 -D eeepc-bootup.sh \
 		/usr/bin/eeepc-bootup.sh \
 		&& echo -e "Installed eeepc-bootup.sh"
+  install -m 755 -S eeepc-power-manager.sh \
+		/usr/bin/eeepc-power-manager.sh \
+		&& echo -e "Installed eeepc-power-manager.sh"
 
+# Uninstall the package:
 else
   rm /etc/conf.d/eeepc-1015pem-acpi.conf && echo -e "Removed eeepc-1015pem-acpi.conf"
   rm /etc/acpi/eeepc-1015pem-acpi-handler.sh && echo -e "Removed eeepc-1015pem-acpi-handler.sh"
   rm /etc/acpi/eeepc/eeepc-1015pem-acpi-functions && echo -e "Removed eeepc-1015pem-acpi-functions"
   rm /etc/acpi/events/eeepc-1015pem-acpi-events && echo -e "Removed eeepc-1015pem-acpi-events"
   rm /etc/acpi/eeepc/switch_perf_powersave.sh && echo -e "Removed eeepc-sys_proc_tweaks.sh"
-  rm /usr/bin/eeepc-bootup.sh
+  rm /usr/bin/eeepc-bootup.sh && echo -e "Removed eeepc-bootup.sh"
+  rm /usr/bin/eeepc-power-manager.sh && echo -e "Removed eeepc-power-manager.sh"
 fi
