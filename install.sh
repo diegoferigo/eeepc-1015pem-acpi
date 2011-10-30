@@ -66,7 +66,7 @@ if [ ! "$UNINSTALL" = "y" ] ; then
   install -m 755 -D eeepc-bootup.sh \
 		/usr/bin/eeepc-bootup.sh \
 		&& echo -e "Installed eeepc-bootup.sh"
-  install -m 755 -S eeepc-power-manager.sh \
+  install -m 755 -D eeepc-power-manager.sh \
 		/usr/bin/eeepc-power-manager.sh \
 		&& echo -e "Installed eeepc-power-manager.sh"
 
