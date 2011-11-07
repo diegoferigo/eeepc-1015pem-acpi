@@ -52,18 +52,18 @@ case "$1" in
     button/power)
         case "$2" in
             PBTN|PWRF) echo -e "$logdate Button power pressed" >> $logfile 
-		       $ACTION_POWER_BUTTON
-	    ;;
+							  $ACTION_POWER_BUTTON
+	     ;;
         esac
     ;;
 
     button/sleep)
         case "$2" in
             SLPB) echo -e "$logdate Sleep power pressed" >> $logfile
-		  $ACTION_SLEEP   
-	    ;;
+						$ACTION_SLEEP   
+	     ;;
             *)      echo -e "$logdate [WW] ACPI action undefined: $2" >> $logfile 
-	    ;;
+	     ;;
         esac
     ;;
 
@@ -72,83 +72,74 @@ case "$1" in
             AC|AC0|ACAD|ADP0)
                 case "$4" in
                     00000000) echo -e "$logdate AC cable unplugged" >> $logfile
-			      echo -e "$logdate Switch to powersave settings" >> $logfile
-                        $ACTION_AC_UNPLUG
-			for i in 0 1 2 3 ; do
-           		  echo "conservative" > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
-         		done
-			she_toggle powersave
+										echo -e "$logdate Switch to powersave settings" >> $logfile
+                       			$ACTION_AC_UNPLUG
+                       			$ADDITIONAL_AC_UNPLUG
                     ;;
                     00000001) echo -e "$logdate AC cable plugged" >> $logfile
                               echo -e "$logdate Switch to performance settings" >> $logfile
-                        $ACTION_AC_PLUG
-			for i in 0 1 2 3 ; do
-           		  echo "ondemand" > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
-         		done
-			she_toggle performance
+                        		$ACTION_AC_PLUG
+										$ADDITIONAL_AC_PLUG
                     ;;
                 esac
-            ;;
-            *)  echo -e "$logdate [WW] ACPI action undefined: $2" >> $logfile ;;
-        esac
         ;;
+        *)  echo -e "$logdate [WW] ACPI action undefined: $2" >> $logfile ;;
+        esac
+    ;;
 
     battery|processor) ;;
 
-    button/lid)
-	lidstate=""
-        [ -e /proc/acpi/button/lid/LID/state ] && \
-            lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
+    button/lid) lidstate=""
+        			 [ -e /proc/acpi/button/lid/LID/state ] && \
+            	 lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
 
-	case "$lidstate" in
-          open) echo -e "$logdate Screen opened" >> $logfile
-		$ACTION_SCREEN_OPEN
-	  ;;
-	  closed) echo -e "$logdate Screen closed" >> $logfile
-		  $ACTION_SCREEN_CLOSED
-          ;;
-	esac
+					 case "$lidstate" in
+          		     open) echo -e "$logdate Screen opened" >> $logfile
+								  $ACTION_SCREEN_OPEN
+	  				     ;;
+	  					  closed) echo -e "$logdate Screen closed" >> $logfile
+									 $ACTION_SCREEN_CLOSED
+          			  ;;
+					 esac
     ;;
 
-    hotkey)
-	case $3 in
-		$SHE_TOGGLE) echo -e "$logdate She button pressed" >> $logfile
-			     $ACTION_SHE_TOGGLE		     
-		;;
-		$SLEEP) echo -e "$logdate Sleep button pressed" >> $logfile
-			$ACTION_SLEEP	
-		;;
-		$WIFI_TOGGLE) echo -e "$logdate Wifi button pressed" >> $logfile
-			      $ACTION_WIFI_TOGGLE	      
-		;;
-		$TOUCHPAD_TOGGLE) echo -e "$logdate Touchpad button pressed" >> $logfile
-				  $ACTION_TOUCHPAD_TOGGLE	  
-		;;
-		$ROTATE) echo -e "$logdate Rotate button pressed" >> $logfile
-			 $ACTION_ROTATE			 
-		;;
-		$BRIGHTNESS_UP) $ACTION_BRIGHTNESS_UP
-		;;
-		$BRIGHTNESS_DOWN) $ACTION_BRIGHTNESS_DOWN
-		;;
-		$SCREEN_OFF) echo -e "$logdate Screen Off button pressed" >> $logfile
-			     $ACTION_SCREEN_CLOSED		
-		;;
-		$RANDR_TOGGLE) echo -e "$logdate Randr Toggle button pressed" >> $logfile
-			       $ACTION_RANDR_TOGGLE
-		;;
-		$TASK) echo -e "$logdate Task button pressed" >> $logfile
-		       $ACTION_TASK
-		;;
-		$VOL_MUTE) $ACTION_VOL_MUTE
-		;;
-		$VOL_DOWN) $ACTION_VOL_DOWN
-		;;
-		$VOL_UP) $ACTION_VOL_UP
-		;;
-	esac
+    hotkey)  case $3 in
+				     $SHE_TOGGLE) echo -e "$logdate She button pressed" >> $logfile
+										$ACTION_SHE_TOGGLE		     
+					  ;;
+					  $SLEEP) echo -e "$logdate Sleep button pressed" >> $logfile
+								 $ACTION_SLEEP	
+					  ;;
+					  $WIFI_TOGGLE) echo -e "$logdate Wifi button pressed" >> $logfile
+			      					 $ACTION_WIFI_TOGGLE	      
+					  ;;
+					  $TOUCHPAD_TOGGLE) echo -e "$logdate Touchpad button pressed" >> $logfile
+				  							  $ACTION_TOUCHPAD_TOGGLE	  
+					  ;;
+					  $ROTATE) echo -e "$logdate Rotate button pressed" >> $logfile
+			 					  $ACTION_ROTATE			 
+					  ;;
+					  $BRIGHTNESS_UP) $ACTION_BRIGHTNESS_UP
+					  ;;
+					  $BRIGHTNESS_DOWN) $ACTION_BRIGHTNESS_DOWN
+					  ;;
+					  $SCREEN_OFF) echo -e "$logdate Screen Off button pressed" >> $logfile
+			     						$ACTION_SCREEN_CLOSED		
+					  ;;
+					  $RANDR_TOGGLE) echo -e "$logdate Randr Toggle button pressed" >> $logfile
+			       					  $ACTION_RANDR_TOGGLE
+					  ;;
+					  $TASK) echo -e "$logdate Task button pressed" >> $logfile
+		       				$ACTION_TASK
+					  ;;
+					  $VOL_MUTE) $ACTION_VOL_MUTE
+					  ;;
+					  $VOL_DOWN) $ACTION_VOL_DOWN
+					  ;;
+					  $VOL_UP) $ACTION_VOL_UP
+					  ;;
+		    esac
     ;;
-    *)
-        echo -e "$logdate [WW] ACPI group/action undefined: $1 / $2" >> $logfile
-        ;;
+    *) echo -e "$logdate [WW] ACPI group/action undefined: $1 / $2" >> $logfile
+       ;;
 esac
