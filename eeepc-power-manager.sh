@@ -23,8 +23,7 @@
 . /etc/conf.d/eeepc-1015pem-acpi.conf
 
 # Count of the number of the preset in config file
-number=0
-for preset in ${PRESET[*]} ; do
+for preset in ${NAME[*]} ; do
   number=$(($number+1))
 done
 
@@ -36,28 +35,24 @@ help()
   echo -e ""
   echo -e "Existing presets:"
   # Dynamic creation of the presets name:
-  i=0
   for i in `seq 1 $number` ; do
-    echo -e "-> $i: $NAME_$i"
+    echo -e "-> `eval echo \${NAME[$i]}`"
   done
   # The governor enabled into the kernel:
   echo -e "Existing cpu governor:"
-  echo -e "-> performance"
-  echo -e "-> ondemand"
-  echo -e "-> conservative"
-  echo -e "-> powersave"
+  for i in `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors` ; do
+    echo "-> $i"
+  done
   # SHE governor: eeepc_laptop module
   echo -e "Existing SHE governor"
   echo -e "-> performance"
   echo -e "-> normal"
   echo -e "-> powersave"
 }
-
 help
-
 apply_CPU()
 {
-  for i in 0 1 2 3 ; do #TODO dinamyc creation of the core number
+  for i in $(seq 0 $((`cat /proc/cpuinfo | grep processor | wc -l`-1))) ; do
     echo "$1" > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
   done
 }
@@ -65,11 +60,11 @@ apply_CPU()
 apply_preset()
 {
   # CPU governor:
-  apply_CPU $CPU_GOV_$1
+  apply_CPU `eval echo \${CPU_GOV[$1]}`
   # SHE governor:
-  she_toggle $SHE_$1
+  she_toggle `eval echo \${SHE[$1]}`
   # Tweak some /sys and /proc entry
-  if [ "$SYS_PROC_TWEAK_$1" = "yes"] ; then
+  if [ `eval echo \${SYS_PROC_TWEAK[$1]}` == "yes" ] ; then
     sh /usr/bin/eeepc-sys_proc_tweaks
   fi
 }
@@ -78,22 +73,22 @@ for i in $@ ; do
   case $1 in
     -p)	shift
         # Check if the preset name exist and if so, load it
-        j=0
-        for name in ${PRESET[*]} ; do
-          if [ $1 = "$name" ] ; then
+        j=1
+        for name in ${NAME[*]} ; do
+          if [ "$1" == "$name" ] ; then
             apply_preset $j
-            echo -e "Preset $NAME_$j loaded!"
+            echo -e Preset `eval echo \${NAME[$j]}` loaded!
             exit 0
           fi
-          $((j=$j+1))
+          let "j=$j+1"
         done
     ;;
     -c) shift
-        for gov in performance ondemand conservative powersave ; do
-	  if [ $1 = $gov ] ; then 
+        for gov in `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors` ; do
+	  	    if [ $1 = $gov ] ; then 
             apply_CPU $1
             echo -e "CPU governor: --> $1"
-	  fi
+	  	    fi
         done
     ;;
     -s) shift
