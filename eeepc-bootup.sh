@@ -3,10 +3,10 @@
 
 #If the cable is plugged
 if [ "$(cat /proc/acpi/ac_adapter/AC0/state | awk '{print $2}')" = "on-line" ] ; then
-    sh /etc/acpi/eeepc-1015pem-acpi-handler.sh ac_adapter AC0 00000001
-    echo -e $logdate "Boot:" >> $logfile 
+    eeepc-power-manager.sh -p Performance
+    echo -e "$logdate Boot to Performance profile" >> $logfile 
 #If the cable is unplugged
 else
-    sh /etc/acpi/eeepc-1015pem-acpi-handler.sh ac_adapter AC0 00000000
-    echo -e "$logdate Boot:" >> $logfile 
+    eeepc-power-manager.sh -p Powersave
+    echo -e "$logdate Boot to Powersave profile" >> $logfile 
 fi
