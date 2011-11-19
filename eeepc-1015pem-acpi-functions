@@ -18,6 +18,18 @@ if [ "$(stat -c %s $logfile)" -gt "4194304" ] ; then
 fi
 
 
+# She value
+SHE_DIR="/sys/devices/platform/eeepc/cpufv"
+she_value=`cat $SHE_DIR`
+
+# Cpu governor value
+gov_value=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor`
+
+# Count of the number of the preset in config file
+for preset in ${NAME[*]} ; do
+  preset_num=$(($preset_num+1))
+done
+
 # Function to set the right user if not set in the conf file
 user() {
   if [ "a$USER" = "a" ] ; then
@@ -32,15 +44,18 @@ user() {
 }
 
 # Function used to send a notification, checking the
-# conf file, to choose the right notification system
+# conf file to choose the right notification system
 notify() {
   user
   case $1 in
       touchpad) [ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'Touchpad' '$touch_not'"
-		[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$touch_not' --title 'Touchpad'"
+			[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$touch_not' --title 'Touchpad'"
       ;;
-      she)	[ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'SHE:' '$old --> $new'"
-    		[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$old --> $new' --title 'SHE:'"
+      she)	[ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'SHE:' '$she_old --> $she_new'"
+    		[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$she_old --> $she_new' --title 'SHE:'"
+    	;;
+    	preset) [ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'PRESET:' '$preset_old --> $preset_new'"
+    		[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$preset_old --> $preset_new' --title 'PRESET:'"
       ;;
   esac
 }
@@ -48,37 +63,37 @@ notify() {
 # Function to toggle the FSB clock through
 # the Asus Super Hybrid Engine
 she_toggle() {
-SHE_DIR="/sys/devices/platform/eeepc/cpufv"
 export DISPLAY=:0
 
+# Check if the $1 is empty and do a cyclic toggle
 if [ a$1 = "a" ] ; then
   case "$(cat $SHE_DIR)" in
     0x300)	# To Powersave
       echo 2 > $SHE_DIR
-      new="Powersave"
-      old="Performance"
+      she_new="Powersave"
+      she_old="Performance"
       notify she
     ;;
     0x301)	# To Performance 
       echo 0 > $SHE_DIR
-      new="Performance"
-      old="Normal"
+      she_new="Performance"
+      she_old="Normal"
       notify she
     ;;
     0x302)	# To Normal
       echo 1 > $SHE_DIR
-      new="Normal"
-      old="Powersave"
+      she_new="Normal"
+      she_old="Powersave"
       notify she
     ;;
     *)
       echo 1 > $SHE_DIR
-      new="Normal"
-      old=""
+      she_new="Normal"
+      she_old=""
       notify she
     ;;
   esac
-  echo -e "$logdate SHE: $old --> $new" >> $logfile
+  echo -e "$logdate SHE: $she_old --> $she_new" >> $logfile
 else
   case $1 in
     powersave) echo 2 > $SHE_DIR
@@ -90,10 +105,80 @@ else
   esac
   echo -e "$logdate SHE: --> $1 ; Automatic switch" >> $logfile
 fi
-
 }
 
-#Function to toggle the touchpad, via synclient (xf86-input-synaptics)
+# Converts the name of the she governor into his 0x30X number
+she_name2number()
+{
+case $1 in
+  performance) PRESET_SHE_NUM="0x300" ;;
+  normal) PRESET_SHE_NUM="0x301" ;;
+  powersave) PRESET_SHE_NUM="0x302";;
+esac
+}
+
+# Returns the number of the preset, for example 3 for the Performance preset
+# The check method is a bit crude :)
+check_preset() #TODO gestire il profilo non trovato
+{
+# First thing, check the preset with the current governor
+j=1
+for i in powersave conservative ondemand performance ; do
+  if [ $gov_value == `eval echo \${CPU_GOV[$j]}` ] ; then
+  	 # Check if the she preset is the same as the current value
+    she_name2number $(eval echo \${SHE[$j]})
+    if [ "$she_value" == "$PRESET_SHE_NUM" ] ; then
+      # Now i have 2 value as the preset, return his number
+      return $j
+    fi
+  fi
+  j=$(($j+1))
+done
+}
+
+# Function that rotate the existing presets.
+preset_toggle()
+{
+check_preset
+CURRENT_PRESET=$?
+preset_old=`eval echo \${NAME[$CURRENT_PRESET]}`
+
+# I don't know how many presets are declared in .conf file
+# Dynamic creation of the next preset number:
+NEXT_PRESET=$(( ($CURRENT_PRESET%$preset_num) + 1 ))
+preset_new=`eval echo \${NAME[$NEXT_PRESET]}`
+
+# Load next preset
+eeepc-power-manager.sh -p $preset_new
+
+# Send notification and log
+notify preset
+echo -e "$logdate PRESET: $preset_old --> $preset_new" >> $logfile
+}
+
+# Function that switch all the present CPU to a governor given as $1
+apply_CPU()
+{
+  for i in $(seq 0 $((`cat /proc/cpuinfo | grep processor | wc -l`-1))) ; do
+    echo "$1" > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
+  done
+}
+
+# Function that read the .conf file and load the right
+# CPU / SHE governor and the sys_proc tweak enable/disable
+apply_preset()
+{
+  # CPU governor:
+  apply_CPU `eval echo \${CPU_GOV[$1]}`
+  # SHE governor:
+  she_toggle `eval echo \${SHE[$1]}`
+  # Tweak some /sys and /proc entry
+  if [ `eval echo \${SYS_PROC_TWEAK[$1]}` == "yes" ] ; then
+    sh /etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh
+  fi
+}
+
+# Function to toggle the touchpad, via synclient (xf86-input-synaptics)
 touchpad_toggle() {
 TOUCH_STATUS=`synclient | grep TouchpadOff | awk '{print $3}'`
 touchlog="$logdate Touchpad"

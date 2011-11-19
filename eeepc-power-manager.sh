@@ -22,11 +22,6 @@
 . /etc/acpi/eeepc/eeepc-1015pem-acpi-functions
 . /etc/conf.d/eeepc-1015pem-acpi.conf
 
-# Count of the number of the preset in config file
-for preset in ${NAME[*]} ; do
-  number=$(($number+1))
-done
-
 help()
 {
   echo -e "Use:"
@@ -35,7 +30,7 @@ help()
   echo -e ""
   echo -e "Existing presets:"
   # Dynamic creation of the presets name:
-  for i in `seq 1 $number` ; do
+  for i in `seq 1 $preset_num` ; do
     echo -e "-> `eval echo \${NAME[$i]}`"
   done
   # The governor enabled into the kernel:
@@ -49,26 +44,8 @@ help()
   echo -e "-> normal"
   echo -e "-> powersave"
 }
-help
-apply_CPU()
-{
-  for i in $(seq 0 $((`cat /proc/cpuinfo | grep processor | wc -l`-1))) ; do
-    echo "$1" > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
-  done
-}
 
-apply_preset()
-{
-  # CPU governor:
-  apply_CPU `eval echo \${CPU_GOV[$1]}`
-  # SHE governor:
-  she_toggle `eval echo \${SHE[$1]}`
-  # Tweak some /sys and /proc entry
-  if [ `eval echo \${SYS_PROC_TWEAK[$1]}` == "yes" ] ; then
-    sh /usr/bin/eeepc-sys_proc_tweaks
-  fi
-}
-
+# Parse the stdin
 for i in $@ ; do
   case $1 in
     -p)	shift
@@ -84,6 +61,7 @@ for i in $@ ; do
         done
     ;;
     -c) shift
+    	  # Dynamic check of the existing governors
         for gov in `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors` ; do
 	  	    if [ $1 = $gov ] ; then 
             apply_CPU $1

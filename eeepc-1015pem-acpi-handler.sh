@@ -31,7 +31,7 @@ KEY_Fn_F11="00000014"   # Volume Down
 KEY_Fn_F12="00000015"   # Volume Up
 KEY_Fn_Space="00000039" # Space Bar
 
-SHE_TOGGLE=$KEY_Fn_Space
+PROFILE_TOGGLE=$KEY_Fn_Space
 SLEEP=$KEY_Fn_F1
 WIFI_TOGGLE=${KEY_Fn_F2[0]}
 TOUCHPAD_TOGGLE=$KEY_Fn_F3
@@ -104,11 +104,11 @@ case "$1" in
     ;;
 
     hotkey)  case $3 in
-				     $SHE_TOGGLE) echo -e "$logdate She button pressed" >> $logfile
-										$ACTION_SHE_TOGGLE		     
+				     $PROFILE_TOGGLE) echo -e "$logdate Profile button pressed" >> $logfile
+										$ACTION_PROFILE_TOGGLE     
 					  ;;
 					  $SLEEP) echo -e "$logdate Sleep button pressed" >> $logfile
-								 $ACTION_SLEEP	
+								 $ACTION_SLEEP
 					  ;;
 					  $WIFI_TOGGLE) echo -e "$logdate Wifi button pressed" >> $logfile
 			      					 $ACTION_WIFI_TOGGLE	      
