@@ -4,7 +4,7 @@ REQUIRED PACKAGES:
 - libnotify: notification support in gtk systems
 - kdialog: notification support in qt systems
 - dmidecode: check model in install script
-- a kernel that supports frequency scaling
+- a kernel that supports frequency scaling and eeepc_laptop module
 
 CONFIG_CPU_FREQ
 CONFIG_CPU_FREQ_TABLE
@@ -13,6 +13,8 @@ CONFIG_CPU_FREQ_GOV_POWERSAVE
 CONFIG_CPU_FREQ_GOV_ONDEMAND
 CONFIG_CPU_FREQ_GOV_CONSERVATIVE
 CONFIG_X86_ACPI_CPUFREQ
+
+CONFIG_EEEPC_LAPTOP
 
 ##############################################################################
 
@@ -36,6 +38,19 @@ sh ./install.sh --uninstall
 
 ##############################################################################
 ##############################################################################
+
+FEATURES:
+
+- Link commands to all Fn+FX keys
+- Touchpad toggle
+- SHE toggle
+- CPU governors toggle
+- Various tweaks in /sys and /proc
+- Log support
+- libnotify/kdialog support
+- boot to powersave/performace (put eeepc-bootup.sh in /etc/rc.local)
+- presets support (manage CPU+SHE+Sys_Proc_Tweaks with easy performance profile)
+- manual switch the presets/CPU/SHE (eeepc-power-manager.sh)
 
 Credits to:
 
