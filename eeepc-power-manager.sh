@@ -22,6 +22,14 @@
 . /etc/acpi/eeepc/eeepc-1015pem-acpi-functions
 . /etc/conf.d/eeepc-1015pem-acpi.conf
 
+# Check if i have root access
+if [ $(whoami) != "root" ] ; then
+  echo -e ">>"
+  echo -e ">> You must be root to use this script"
+  echo -e ">>"
+  exit 0
+fi
+
 help()
 {
   echo -e "Use:"
