@@ -40,9 +40,9 @@ user() {
     if [ "$(who | wc -l)" = "1" ] ; then
       USER="$(who | awk '{print $1}')"
     else
-      echo -e "$logdate [WW] You have more than one user logged in!" >> $logfile
-      echo -e "$logdate [WW] Please set your user name in" >> $logfile
-      echo -e "$logdate [WW] /etc/conf.d/eeepc-1015pem-acpi.conf" >> $logfile
+      sendlog "[WW] You have more than one user logged in!"
+      sendlog "[WW] Please set your user name in"
+      sendlog "[WW] /etc/conf.d/eeepc-1015pem-acpi.conf"
     fi
   fi
 }
@@ -97,7 +97,7 @@ if [ a$1 = "a" ] ; then
       notify she
     ;;
   esac
-  echo -e "$logdate SHE: $she_old --> $she_new" >> $logfile
+  sendlog "SHE: $she_old --> $she_new"
 else
   case $1 in
     powersave) echo 2 > $SHE_DIR
@@ -107,7 +107,6 @@ else
     performance) echo 0 > $SHE_DIR
     ;;
   esac
-  echo -e "$logdate SHE: --> $1 ; Automatic switch" >> $logfile
 fi
 }
 
@@ -155,9 +154,14 @@ preset_new=`eval echo \${NAME[$NEXT_PRESET]}`
 # Load next preset
 eeepc-power-manager.sh -p $preset_new
 
-# Send notification and log
+# Send notification
 notify preset
-echo -e "$logdate PRESET: $preset_old --> $preset_new" >> $logfile
+# Send log
+sendlog "PRESET: $preset_old --> $preset_new"
+sendlog "== SHE: `eval echo \${SHE[$CURRENT_PRESET]}` --> `eval echo \${SHE[$NEXT_PRESET]}`"
+sendlog "== CPU: `eval echo \${CPU_GOV[$CURRENT_PRESET]}` --> `eval echo \${CPU_GOV[$NEXT_PRESET]}`"
+sendlog "== SYS_PROC_TWEAK: `eval echo \${SYS_PROC_TWEAK[$CURRENT_PRESET]}` \
+--> `eval echo \${SYS_PROC_TWEAK[$NEXT_PRESET]}`"
 }
 
 # Function that switch all the present CPU to a governor given as $1
@@ -178,23 +182,28 @@ apply_preset()
   she_toggle `eval echo \${SHE[$1]}`
   # Tweak some /sys and /proc entry
   if [ `eval echo \${SYS_PROC_TWEAK[$1]}` == "yes" ] ; then
-    sh /etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh
+    sh /etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh powersave
+  else
+    sh /etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh performance
   fi
+  # Send log
+  sendlog "PRESET: --> `eval echo \${NAME[$1]}`"
+  sendlog "== SHE: --> `eval echo \${SHE[$1]}`"
+  sendlog "== CPU: --> `eval echo \${CPU_GOV[$1]}`"
+  sendlog "== SYS_PROC_TWEAK: --> `eval echo \${SYS_PROC_TWEAK[$1]}`"
 }
 
 # Function to toggle the touchpad, via synclient (xf86-input-synaptics)
 touchpad_toggle() {
 TOUCH_STATUS=`synclient | grep TouchpadOff | awk '{print $3}'`
-touchlog="$logdate Touchpad"
 
 if [ $TOUCH_STATUS = 0 ] ; then
   synclient TouchpadOff=1
-  touch_not="disabled"
   notify touchpad
+  sendlog "Touchpad disabled"
 else
   synclient TouchpadOff=0
-  touch_not="enabled"
   notify touchpad
+  sendlog "Touchpad enabled"
 fi
-echo -e "$touchlog $touch_not" >> $logfile
 }
