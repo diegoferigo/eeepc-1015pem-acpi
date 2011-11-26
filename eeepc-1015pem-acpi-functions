@@ -131,8 +131,12 @@ for i in powersave conservative ondemand performance ; do
   	 # Check if the she preset is the same as the current value
     she_name2number $(eval echo \${SHE[$j]})
     if [ "$she_value" == "$PRESET_SHE_NUM" ] ; then
-      # Now i have 2 value as the preset, return his number
-      return $j
+      # Check one of the value modified by sys_proc_tweaks
+      SPT="no" && [ `cat /proc/sys/vm/laptop_mode` == 5 ] && SPT="yes"
+      if [ $SPT ==  `eval echo \${SYS_PROC_TWEAK[$j]}` ] ; then
+        # Now i have 3 value as the preset, return his number
+        return $j
+      fi
     fi
   fi
   j=$(($j+1))
