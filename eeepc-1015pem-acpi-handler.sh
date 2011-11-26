@@ -51,7 +51,7 @@ VOL_UP=$KEY_Fn_F12
 case "$1" in
     button/power)
         case "$2" in
-            PBTN|PWRF) echo -e "$logdate Button power pressed" >> $logfile 
+            PBTN|PWRF) sendlog "Button power pressed"
 							  $ACTION_POWER_BUTTON
 	     ;;
         esac
@@ -59,10 +59,10 @@ case "$1" in
 
     button/sleep)
         case "$2" in
-            SLPB) echo -e "$logdate Sleep power pressed" >> $logfile
+            SLPB) sendlog "Sleep power pressed"
 						$ACTION_SLEEP   
 	     ;;
-            *)      echo -e "$logdate [WW] ACPI action undefined: $2" >> $logfile 
+            *)    sendlog "[WW] ACPI action undefined: $2"
 	     ;;
         esac
     ;;
@@ -71,19 +71,19 @@ case "$1" in
         case "$2" in
             AC|AC0|ACAD|ADP0)
                 case "$4" in
-                    00000000) echo -e "$logdate AC cable unplugged" >> $logfile
-										echo -e "$logdate Switch to powersave settings" >> $logfile
+                    00000000) sendlog "AC cable unplugged"
+										sendlog "Switch to powersave settings"
                        			$ACTION_AC_UNPLUG
                        			$ADDITIONAL_AC_UNPLUG
                     ;;
-                    00000001) echo -e "$logdate AC cable plugged" >> $logfile
-                              echo -e "$logdate Switch to performance settings" >> $logfile
+                    00000001) sendlog "AC cable plugged"
+                              sendlog "Switch to performance settings"
                         		$ACTION_AC_PLUG
 										$ADDITIONAL_AC_PLUG
                     ;;
                 esac
         ;;
-        *)  echo -e "$logdate [WW] ACPI action undefined: $2" >> $logfile ;;
+        *)  sendlog "[WW] ACPI action undefined: $2" ;;
         esac
     ;;
 
@@ -94,42 +94,42 @@ case "$1" in
             	 lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
 
 					 case "$lidstate" in
-          		     open) echo -e "$logdate Screen opened" >> $logfile
+          		     open) sendlog "Screen opened"
 								  $ACTION_SCREEN_OPEN
 	  				     ;;
-	  					  closed) echo -e "$logdate Screen closed" >> $logfile
+	  					  closed) sendlog "Screen closed"
 									 $ACTION_SCREEN_CLOSED
           			  ;;
 					 esac
     ;;
 
     hotkey)  case $3 in
-				     $PROFILE_TOGGLE) echo -e "$logdate Profile button pressed" >> $logfile
+				     $PROFILE_TOGGLE) sendlog "Profile button pressed"
 										$ACTION_PROFILE_TOGGLE     
 					  ;;
-					  $SLEEP) echo -e "$logdate Sleep button pressed" >> $logfile
+					  $SLEEP) sendlog "Sleep button pressed"
 								 $ACTION_SLEEP
 					  ;;
-					  $WIFI_TOGGLE) echo -e "$logdate Wifi button pressed" >> $logfile
+					  $WIFI_TOGGLE) sendlog "Wifi button pressed"
 			      					 $ACTION_WIFI_TOGGLE	      
 					  ;;
-					  $TOUCHPAD_TOGGLE) echo -e "$logdate Touchpad button pressed" >> $logfile
+					  $TOUCHPAD_TOGGLE) sendlog "Touchpad button pressed"
 				  							  $ACTION_TOUCHPAD_TOGGLE	  
 					  ;;
-					  $ROTATE) echo -e "$logdate Rotate button pressed" >> $logfile
+					  $ROTATE) sendlog "Rotate button pressed"
 			 					  $ACTION_ROTATE			 
 					  ;;
 					  $BRIGHTNESS_UP) $ACTION_BRIGHTNESS_UP
 					  ;;
 					  $BRIGHTNESS_DOWN) $ACTION_BRIGHTNESS_DOWN
 					  ;;
-					  $SCREEN_OFF) echo -e "$logdate Screen Off button pressed" >> $logfile
+					  $SCREEN_OFF) sendlog "Screen Off button pressed"
 			     						$ACTION_SCREEN_CLOSED		
 					  ;;
-					  $RANDR_TOGGLE) echo -e "$logdate Randr Toggle button pressed" >> $logfile
+					  $RANDR_TOGGLE) sendlog "Randr Toggle button pressed"
 			       					  $ACTION_RANDR_TOGGLE
 					  ;;
-					  $TASK) echo -e "$logdate Task button pressed" >> $logfile
+					  $TASK) sendlog "Task button pressed"
 		       				$ACTION_TASK
 					  ;;
 					  $VOL_MUTE) $ACTION_VOL_MUTE
@@ -140,6 +140,6 @@ case "$1" in
 					  ;;
 		    esac
     ;;
-    *) echo -e "$logdate [WW] ACPI group/action undefined: $1 / $2" >> $logfile
+    *) sendlog "[WW] ACPI group/action undefined: $1 / $2"
        ;;
 esac

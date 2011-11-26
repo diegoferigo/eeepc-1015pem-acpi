@@ -4,6 +4,10 @@
 #Set the logfile position and the date format
 logfile="/var/log/eeepc-acpi.log"
 logdate="$(date +'[%d-%m-%y %k:%M]')"
+sendlog()
+{
+  echo -e "$logdate $1" >> $logfile
+}
 
 #If the file doesn't exist
 if [ ! -e $logfile ] ; then
