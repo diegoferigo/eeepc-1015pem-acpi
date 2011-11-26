@@ -76,7 +76,7 @@ else
   rm /etc/acpi/eeepc-1015pem-acpi-handler.sh && echo -e "Removed eeepc-1015pem-acpi-handler.sh"
   rm /etc/acpi/eeepc/eeepc-1015pem-acpi-functions && echo -e "Removed eeepc-1015pem-acpi-functions"
   rm /etc/acpi/events/eeepc-1015pem-acpi-events && echo -e "Removed eeepc-1015pem-acpi-events"
-  rm /etc/acpi/eeepc/switch_perf_powersave.sh && echo -e "Removed eeepc-sys_proc_tweaks.sh"
+  rm /etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh && echo -e "Removed eeepc-sys_proc_tweaks.sh"
   rm /usr/bin/eeepc-bootup.sh && echo -e "Removed eeepc-bootup.sh"
   rm /usr/bin/eeepc-power-manager.sh && echo -e "Removed eeepc-power-manager.sh"
 fi
