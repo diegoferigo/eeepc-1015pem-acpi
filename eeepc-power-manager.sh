@@ -80,5 +80,6 @@ for i in $@ ; do
     -s) shift
         she_toggle $1
     ;;
+    *) help ;;
   esac
 done
