@@ -27,7 +27,9 @@ case "$1" in
 
 	# SATA power saving
 	for i in `ls /sys/class/scsi_host/` ; do
-	  echo min_power > /sys/class/scsi_host/$i/link_power_management_policy
+	  if [ -e /sys/class/scsi_host/$i/link_power_management_policy ] ; then
+	    echo min_power > /sys/class/scsi_host/$i/link_power_management_policy
+	  fi
 	done
 
 	# Disable hardware modules to save power
@@ -63,8 +65,10 @@ case "$1" in
 	for i in /sys/bus/usb/devices/*/power/autosuspend; do
 	  echo 2 > $i
 	done
-   for i in `ls /sys/class/scsi_host/` ; do
-	  echo max_performance > /sys/class/scsi_host/$i/link_power_management_policy
+	for i in `ls /sys/class/scsi_host/` ; do
+	  if [ -e /sys/class/scsi_host/$i/link_power_management_policy ] ; then
+	    echo max_performance > /sys/class/scsi_host/$i/link_power_management_policy
+	  fi
 	done
 	for mod in $modlist; do
 	  if ! lsmod | grep $mod; then
