@@ -50,15 +50,16 @@ user() {
 # Function used to send a notification, checking the
 # conf file to choose the right notification system
 notify() {
+  export DISPLAY=:0.0
   user
   case $1 in
       touchpad) [ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'Touchpad' '$touch_not'"
-			[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$touch_not' --title 'Touchpad'"
+		[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$touch_not' --title 'Touchpad'"
       ;;
       she)	[ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'SHE:' '$she_old --> $she_new'"
     		[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$she_old --> $she_new' --title 'SHE:'"
     	;;
-    	preset) [ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'PRESET:' '$preset_old --> $preset_new'"
+      preset) [ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'PRESET:' '$preset_old --> $preset_new'"
     		[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$preset_old --> $preset_new' --title 'PRESET:'"
       ;;
   esac
@@ -67,8 +68,6 @@ notify() {
 # Function to toggle the FSB clock through
 # the Asus Super Hybrid Engine
 she_toggle() {
-export DISPLAY=:0
-
 # Check if the $1 is empty and do a cyclic toggle
 if [ a$1 = "a" ] ; then
   case "$(cat $SHE_DIR)" in
@@ -201,7 +200,7 @@ apply_preset()
 touchpad_toggle() {
 TOUCH_STATUS=`synclient | grep TouchpadOff | awk '{print $3}'`
 
-if [ $TOUCH_STATUS = 0 ] ; then
+if [ ! $TOUCH_STATUS ] ; then
   synclient TouchpadOff=1
   notify touchpad
   sendlog "Touchpad disabled"
