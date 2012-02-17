@@ -72,7 +72,7 @@ case "$1" in
             AC|AC0|ACAD|ADP0)
                 case "$4" in
                     00000000) sendlog "AC cable unplugged"
-										sendlog "Switch to powersave settings"
+				sendlog "Switch to powersave settings"
                        			$ACTION_AC_UNPLUG
                        			$ADDITIONAL_AC_UNPLUG
                     ;;
@@ -90,53 +90,53 @@ case "$1" in
     battery|processor) ;;
 
     button/lid) lidstate=""
-        			 [ -e /proc/acpi/button/lid/LID/state ] && \
-            	 lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
+        	[ -e /proc/acpi/button/lid/LID/state ] && \
+            	lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
 
-					 case "$lidstate" in
-          		     open) sendlog "Screen opened"
-								  $ACTION_SCREEN_OPEN
-	  				     ;;
-	  					  closed) sendlog "Screen closed"
-									 $ACTION_SCREEN_CLOSED
-          			  ;;
-					 esac
+		case "$lidstate" in
+			open) sendlog "Screen opened"
+			      execute "$ACTION_SCREEN_OPEN"
+	  		;;
+	  		closed) sendlog "Screen closed"
+			      execute "$ACTION_SCREEN_CLOSED"
+			;;
+		esac
     ;;
 
     hotkey)  case $3 in
 				     $PROFILE_TOGGLE) sendlog "Profile button pressed"
-										$ACTION_PROFILE_TOGGLE     
+						execute "$ACTION_PROFILE_TOGGLE"   
 					  ;;
 					  $SLEEP) sendlog "Sleep button pressed"
-								 $ACTION_SLEEP
+						execute "$ACTION_SLEEP"
 					  ;;
 					  $WIFI_TOGGLE) sendlog "Wifi button pressed"
-			      					 $ACTION_WIFI_TOGGLE	      
+			      			execute "$ACTION_WIFI_TOGGLE"      
 					  ;;
 					  $TOUCHPAD_TOGGLE) sendlog "Touchpad button pressed"
-				  							  $ACTION_TOUCHPAD_TOGGLE	  
+				  		execute "$ACTION_TOUCHPAD_TOGGLE"	  
 					  ;;
 					  $ROTATE) sendlog "Rotate button pressed"
-			 					  $ACTION_ROTATE			 
+			 			execute "$ACTION_ROTATE"		 
 					  ;;
-					  $BRIGHTNESS_UP) $ACTION_BRIGHTNESS_UP
+					  $BRIGHTNESS_UP) execute "$ACTION_BRIGHTNESS_UP"
 					  ;;
-					  $BRIGHTNESS_DOWN) $ACTION_BRIGHTNESS_DOWN
+					  $BRIGHTNESS_DOWN) execute "$ACTION_BRIGHTNESS_DOWN"
 					  ;;
 					  $SCREEN_OFF) sendlog "Screen Off button pressed"
-			     						$ACTION_SCREEN_CLOSED		
+			     			execute "$ACTION_SCREEN_CLOSED"		
 					  ;;
 					  $RANDR_TOGGLE) sendlog "Randr Toggle button pressed"
-			       					  $ACTION_RANDR_TOGGLE
+			       				execute "$ACTION_RANDR_TOGGLE"
 					  ;;
 					  $TASK) sendlog "Task button pressed"
-		       				$ACTION_TASK
+						execute "$ACTION_TASK"
 					  ;;
-					  $VOL_MUTE) $ACTION_VOL_MUTE
+					  $VOL_MUTE) execute "$ACTION_VOL_MUTE"
 					  ;;
-					  $VOL_DOWN) $ACTION_VOL_DOWN
+					  $VOL_DOWN) execute "$ACTION_VOL_DOWN"
 					  ;;
-					  $VOL_UP) $ACTION_VOL_UP
+					  $VOL_UP) execute "$ACTION_VOL_UP"
 					  ;;
 		    esac
     ;;

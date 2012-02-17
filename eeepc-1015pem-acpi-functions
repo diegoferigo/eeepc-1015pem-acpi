@@ -1,6 +1,6 @@
 #!/bin/bash
 . /etc/conf.d/eeepc-1015pem-acpi.conf
-
+export DISPLAY=:0.0
 #Set the logfile position and the date format
 logfile="/var/log/eeepc-acpi.log"
 logdate="$(date +'[%d-%m-%y %k:%M]')"
@@ -50,17 +50,16 @@ user() {
 # Function used to send a notification, checking the
 # conf file to choose the right notification system
 notify() {
-  export DISPLAY=:0.0
   user
   case $1 in
-      touchpad) [ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'Touchpad' '$touch_not'"
-		[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$touch_not' --title 'Touchpad'"
+      touchpad) [ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'Touchpad' '$touch_not'"
+		[ $NOTIFY_DE = "qt" ] && execute "@kdialog --passivepopup '$touch_not' --title 'Touchpad'"
       ;;
-      she)	[ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'SHE:' '$she_old --> $she_new'"
-    		[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$she_old --> $she_new' --title 'SHE:'"
+      she)	[ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'SHE:' '$she_old --> $she_new'"
+    		[ $NOTIFY_DE = "qt" ] && execute "@kdialog --passivepopup '$she_old --> $she_new' --title 'SHE:'"
     	;;
-      preset) [ $NOTIFY_DE = "gtk" ] && su $USER -c "notify-send 'PRESET:' '$preset_old --> $preset_new'"
-    		[ $NOTIFY_DE = "qt" ] && su $USER -c "kdialog --passivepopup '$preset_old --> $preset_new' --title 'PRESET:'"
+      preset) [ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'PRESET:' '$preset_old --> $preset_new'"
+    		[ $NOTIFY_DE = "qt" ] && execute "@kdialog --passivepopup '$preset_old --> $preset_new' --title 'PRESET:'"
       ;;
   esac
 }
@@ -196,16 +195,30 @@ apply_preset()
   sendlog "== SYS_PROC_TWEAK: --> `eval echo \${SYS_PROC_TWEAK[$1]}`"
 }
 
+execute()
+{
+  user
+  cmd=( "$@" )
+  if [ "${cmd:0:1}" == "@" ]; then
+    DISPLAY=:0.0 su $USER -c "${cmd:1} &"
+    echo ${cmd:1}
+  else
+    eval $cmd
+  fi
+}
+
 # Function to toggle the touchpad, via synclient (xf86-input-synaptics)
 touchpad_toggle() {
-TOUCH_STATUS=`synclient | grep TouchpadOff | awk '{print $3}'`
-
-if [ ! $TOUCH_STATUS ] ; then
-  synclient TouchpadOff=1
+TOUCH_STATUS=$(execute @synclient | grep TouchpadOff | awk '{print $3}')
+echo "touch = $TOUCH_STATUS"
+if [ $TOUCH_STATUS == 0 ] ; then
+  execute "@synclient TouchpadOff=1"
+  touch_not="disabled"
   notify touchpad
   sendlog "Touchpad disabled"
 else
-  synclient TouchpadOff=0
+  execute "@synclient TouchpadOff=0"
+  touch_not="enabled"
   notify touchpad
   sendlog "Touchpad enabled"
 fi
