@@ -44,7 +44,14 @@ user() {
       sendlog "[WW] Please set your user name in"
       sendlog "[WW] /etc/conf.d/eeepc-1015pem-acpi.conf"
     fi
+  else 
+    if [ $(who | grep $USER | wc -l) == 0 ] ; then
+      sendlog "[WW] You have setted the wrong user in"
+      sendlog "[WW] /etc/conf.d/eeepc-1015pem-acpi.conf"
+      sendlog "[WW] or you are logged with another user"
+    fi 
   fi
+
 }
 
 # Function used to send a notification, checking the
