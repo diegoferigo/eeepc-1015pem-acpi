@@ -49,97 +49,97 @@ VOL_UP=$KEY_Fn_F12
 #########################################
 
 case "$1" in
-    button/power)
-        case "$2" in
-            PBTN|PWRF) sendlog "Button power pressed"
-							  $ACTION_POWER_BUTTON
-	     ;;
-        esac
-    ;;
-
-    button/sleep)
-        case "$2" in
-            SLPB) sendlog "Sleep power pressed"
-						$ACTION_SLEEP   
-	     ;;
-            *)    sendlog "[WW] ACPI action undefined: $2"
-	     ;;
-        esac
-    ;;
-
-    ac_adapter)
-        case "$2" in
-            AC|AC0|ACAD|ADP0)
-                case "$4" in
-                    00000000) sendlog "AC cable unplugged"
-				sendlog "Switch to powersave settings"
-                       			$ACTION_AC_UNPLUG
-                       			$ADDITIONAL_AC_UNPLUG
-                    ;;
-                    00000001) sendlog "AC cable plugged"
-                              sendlog "Switch to performance settings"
-                        		$ACTION_AC_PLUG
-										$ADDITIONAL_AC_PLUG
-                    ;;
-                esac
-        ;;
-        *)  sendlog "[WW] ACPI action undefined: $2" ;;
-        esac
-    ;;
-
-    battery|processor) ;;
-
-    button/lid) lidstate=""
-        	[ -e /proc/acpi/button/lid/LID/state ] && \
-            	lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
-
-		case "$lidstate" in
-			open) sendlog "Screen opened"
-			      execute "$ACTION_SCREEN_OPEN"
-	  		;;
-	  		closed) sendlog "Screen closed"
-			      execute "$ACTION_SCREEN_CLOSED"
+	button/power)
+		case "$2" in
+			PBTN|PWRF)	sendlog "Button power pressed"
+									$ACTION_POWER_BUTTON
 			;;
 		esac
-    ;;
+	;;
 
-    hotkey)  case $3 in
-				     $PROFILE_TOGGLE) sendlog "Profile button pressed"
-						execute "$ACTION_PROFILE_TOGGLE"   
-					  ;;
-					  $SLEEP) sendlog "Sleep button pressed"
-						execute "$ACTION_SLEEP"
-					  ;;
-					  $WIFI_TOGGLE) sendlog "Wifi button pressed"
-			      			execute "$ACTION_WIFI_TOGGLE"      
-					  ;;
-					  $TOUCHPAD_TOGGLE) sendlog "Touchpad button pressed"
-				  		execute "$ACTION_TOUCHPAD_TOGGLE"	  
-					  ;;
-					  $ROTATE) sendlog "Rotate button pressed"
-			 			execute "$ACTION_ROTATE"		 
-					  ;;
-					  $BRIGHTNESS_UP) execute "$ACTION_BRIGHTNESS_UP"
-					  ;;
-					  $BRIGHTNESS_DOWN) execute "$ACTION_BRIGHTNESS_DOWN"
-					  ;;
-					  $SCREEN_OFF) sendlog "Screen Off button pressed"
-			     			execute "$ACTION_SCREEN_CLOSED"		
-					  ;;
-					  $RANDR_TOGGLE) sendlog "Randr Toggle button pressed"
-			       				execute "$ACTION_RANDR_TOGGLE"
-					  ;;
-					  $TASK) sendlog "Task button pressed"
-						execute "$ACTION_TASK"
-					  ;;
-					  $VOL_MUTE) execute "$ACTION_VOL_MUTE"
-					  ;;
-					  $VOL_DOWN) execute "$ACTION_VOL_DOWN"
-					  ;;
-					  $VOL_UP) execute "$ACTION_VOL_UP"
-					  ;;
-		    esac
-    ;;
-    *) sendlog "[WW] ACPI group/action undefined: $1 / $2"
-       ;;
+	button/sleep)
+		case "$2" in
+  		SLPB)	sendlog "Sleep power pressed"
+						$ACTION_SLEEP   
+			;;
+			*)    sendlog "[WW] ACPI action undefined: $2"
+			;;
+		esac
+	;;
+
+	ac_adapter)
+		case "$2" in
+			AC|AC0|ACAD|ADP0)
+				case "$4" in
+					00000000)	sendlog "AC cable unplugged"
+										sendlog "Switch to powersave settings"
+										$ACTION_AC_UNPLUG
+										$ADDITIONAL_AC_UNPLUG
+					;;
+					00000001)	sendlog "AC cable plugged"
+										sendlog "Switch to performance settings"
+										$ACTION_AC_PLUG
+										$ADDITIONAL_AC_PLUG
+					;;
+				esac
+				;;
+				*)  sendlog "[WW] ACPI action undefined: $2" ;;
+		esac
+	;;
+
+	battery|processor) ;;
+
+	button/lid)	lidstate=""
+							[ -e /proc/acpi/button/lid/LID/state ] && \
+							lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
+
+							case "$lidstate" in
+								open)	sendlog "Screen opened"
+											execute "$ACTION_SCREEN_OPEN"
+							;;
+	  						closed) sendlog "Screen closed"
+								execute "$ACTION_SCREEN_CLOSED"
+							;;
+							esac
+	;;
+
+	hotkey)	case $3 in
+						$PROFILE_TOGGLE)	sendlog "Profile button pressed"
+															execute "$ACTION_PROFILE_TOGGLE"   
+						;;
+						$SLEEP)	sendlog "Sleep button pressed"
+										execute "$ACTION_SLEEP"
+						;;
+						$WIFI_TOGGLE)	sendlog "Wifi button pressed"
+													execute "$ACTION_WIFI_TOGGLE"      
+						;;
+						$TOUCHPAD_TOGGLE)	sendlog "Touchpad button pressed"
+															execute "$ACTION_TOUCHPAD_TOGGLE"	  
+						;;
+						$ROTATE)	sendlog "Rotate button pressed"
+											execute "$ACTION_ROTATE"		 
+						;;
+						$BRIGHTNESS_UP) execute "$ACTION_BRIGHTNESS_UP"
+						;;
+						$BRIGHTNESS_DOWN) execute "$ACTION_BRIGHTNESS_DOWN"
+						;;
+						$SCREEN_OFF)	sendlog "Screen Off button pressed"
+													execute "$ACTION_SCREEN_CLOSED"		
+						;;
+						$RANDR_TOGGLE)	sendlog "Randr Toggle button pressed"
+														execute "$ACTION_RANDR_TOGGLE"
+						;;
+						$TASK)	sendlog "Task button pressed"
+										execute "$ACTION_TASK"
+						;;
+						$VOL_MUTE) execute "$ACTION_VOL_MUTE"
+						;;
+						$VOL_DOWN) execute "$ACTION_VOL_DOWN"
+						;;
+						$VOL_UP) execute "$ACTION_VOL_UP"
+						;;
+					esac
+	;;
+	*) sendlog "[WW] ACPI group/action undefined: $1 / $2"
+	;;
 esac

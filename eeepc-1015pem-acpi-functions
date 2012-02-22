@@ -6,19 +6,19 @@ logfile="/var/log/eeepc-acpi.log"
 logdate="$(date +'[%d-%m-%y %k:%M]')"
 sendlog()
 {
-  echo -e "$logdate $1" >> $logfile
+	echo -e "$logdate $1" >> $logfile
 }
 
 #If the file doesn't exist
 if [ ! -e $logfile ] ; then
-  echo -e "#This is the log of eeepc-1015pem-acpi" > $logfile
-  echo -e "#" >> $logfile
-  echo -e "" >> $logfile
+	echo -e "#This is the log of eeepc-1015pem-acpi" > $logfile
+	echo -e "#" >> $logfile
+	echo -e "" >> $logfile
 fi
 
 #If the file is larger than 4MB
 if [ "$(stat -c %s $logfile)" -gt "4194304" ] ; then
-  rm /var/log/eeepc-acpi.log
+	rm /var/log/eeepc-acpi.log
 fi
 
 
@@ -31,98 +31,96 @@ gov_value=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor`
 
 # Count of the number of the preset in config file
 for preset in ${NAME[*]} ; do
-  preset_num=$(($preset_num+1))
+	preset_num=$(($preset_num+1))
 done
 
 # Function to set the right user if not set in the conf file
 user() {
-  if [ "a$USER" = "a" ] ; then
-    if [ "$(who | wc -l)" = "1" ] ; then
-      USER="$(who | awk '{print $1}')"
-    else
-      sendlog "[WW] You have more than one user logged in!"
-      sendlog "[WW] Please set your user name in"
-      sendlog "[WW] /etc/conf.d/eeepc-1015pem-acpi.conf"
-    fi
-  else 
-    if [ $(who | grep $USER | wc -l) == 0 ] ; then
-      sendlog "[WW] You have setted the wrong user in"
-      sendlog "[WW] /etc/conf.d/eeepc-1015pem-acpi.conf"
-      sendlog "[WW] or you are logged with another user"
-    fi 
-  fi
-
+	if [ "a$USER" = "a" ] ; then
+		if [ "$(who | wc -l)" = "1" ] ; then
+			USER="$(who | awk '{print $1}')"
+		else
+			sendlog "[WW] You have more than one user logged in!"
+			sendlog "[WW] Please set your user name in"
+			sendlog "[WW] /etc/conf.d/eeepc-1015pem-acpi.conf"
+		fi
+	else 
+		if [ $(who | grep $USER | wc -l) == 0 ] ; then
+			sendlog "[WW] You have setted the wrong user in"
+			sendlog "[WW] /etc/conf.d/eeepc-1015pem-acpi.conf"
+			sendlog "[WW] or you are logged with another user"
+		fi 
+	fi
 }
 
 # Function used to send a notification, checking the
 # conf file to choose the right notification system
 notify() {
-  user
-  case $1 in
-      touchpad) [ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'Touchpad' '$touch_not'"
-		[ $NOTIFY_DE = "qt" ] && execute "@kdialog --passivepopup '$touch_not' --title 'Touchpad'"
-      ;;
-      she)	[ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'SHE:' '$she_old --> $she_new'"
-    		[ $NOTIFY_DE = "qt" ] && execute "@kdialog --passivepopup '$she_old --> $she_new' --title 'SHE:'"
-    	;;
-      preset) [ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'PRESET:' '$preset_old --> $preset_new'"
-    		[ $NOTIFY_DE = "qt" ] && execute "@kdialog --passivepopup '$preset_old --> $preset_new' --title 'PRESET:'"
-      ;;
-  esac
+	user
+	case $1 in
+		touchpad) [ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'Touchpad' '$touch_not'"
+							[ $NOTIFY_DE = "qt" ] && execute "@kdialog --passivepopup '$touch_not' --title 'Touchpad'"
+	;;
+		she)	[ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'SHE:' '$she_old --> $she_new'"
+					[ $NOTIFY_DE = "qt" ] && execute "@kdialog --passivepopup '$she_old --> $she_new' --title 'SHE:'"
+		;;
+		preset)	[ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'PRESET:' '$preset_old --> $preset_new'"
+						[ $NOTIFY_DE = "qt" ] && execute "@kdialog --passivepopup '$preset_old --> $preset_new' --title 'PRESET:'"
+		;;
+	esac
 }
 
 # Function to toggle the FSB clock through
 # the Asus Super Hybrid Engine
 she_toggle() {
 # Check if the $1 is empty and do a cyclic toggle
-if [ a$1 = "a" ] ; then
-  case "$(cat $SHE_DIR)" in
-    0x300)	# To Powersave
-      echo 2 > $SHE_DIR
-      she_new="Powersave"
-      she_old="Performance"
-      notify she
-    ;;
-    0x301)	# To Performance 
-      echo 0 > $SHE_DIR
-      she_new="Performance"
-      she_old="Normal"
-      notify she
-    ;;
-    0x302)	# To Normal
-      echo 1 > $SHE_DIR
-      she_new="Normal"
-      she_old="Powersave"
-      notify she
-    ;;
-    *)
-      echo 1 > $SHE_DIR
-      she_new="Normal"
-      she_old=""
-      notify she
-    ;;
-  esac
-  sendlog "SHE: $she_old --> $she_new"
-else
-  case $1 in
-    powersave) echo 2 > $SHE_DIR
-    ;;
-    normal) echo 1 > $SHE_DIR
-    ;;
-    performance) echo 0 > $SHE_DIR
-    ;;
-  esac
-fi
+	if [ a$1 = "a" ] ; then
+		case "$(cat $SHE_DIR)" in
+			0x300)	# To Powersave
+				echo 2 > $SHE_DIR
+				she_new="Powersave"
+				she_old="Performance"
+				notify she
+		;;
+			0x301)	# To Performance 
+				echo 0 > $SHE_DIR
+				she_new="Performance"
+				she_old="Normal"
+				notify she
+		;;
+			0x302)	# To Normal
+				echo 1 > $SHE_DIR
+				she_new="Normal"
+				she_old="Powersave"
+				notify she
+		;;
+		*)	echo 1 > $SHE_DIR
+				she_new="Normal"
+      	she_old=""
+				notify she
+		;;
+		esac
+		sendlog "SHE: $she_old --> $she_new"
+	else
+		case $1 in
+			powersave) echo 2 > $SHE_DIR
+			;;
+			normal) echo 1 > $SHE_DIR
+			;;
+			performance) echo 0 > $SHE_DIR
+			;;
+		esac
+	fi
 }
 
 # Converts the name of the she governor into his 0x30X number
 she_name2number()
 {
-case $1 in
-  performance) PRESET_SHE_NUM="0x300" ;;
-  normal) PRESET_SHE_NUM="0x301" ;;
-  powersave) PRESET_SHE_NUM="0x302";;
-esac
+	case $1 in
+		performance) PRESET_SHE_NUM="0x300" ;;
+		normal) PRESET_SHE_NUM="0x301" ;;
+		powersave) PRESET_SHE_NUM="0x302";;
+	esac
 }
 
 # Returns the number of the preset, for example 3 for the Performance preset
@@ -130,103 +128,103 @@ esac
 check_preset() #TODO gestire il profilo non trovato
 {
 # First thing, check the preset with the current governor
-j=1
-for i in powersave conservative ondemand performance ; do
-  if [ $gov_value == `eval echo \${CPU_GOV[$j]}` ] ; then
-  	 # Check if the she preset is the same as the current value
-    she_name2number $(eval echo \${SHE[$j]})
-    if [ "$she_value" == "$PRESET_SHE_NUM" ] ; then
-      # Check one of the value modified by sys_proc_tweaks
-      SPT="no" && [ `cat /proc/sys/vm/laptop_mode` == 5 ] && SPT="yes"
-      if [ $SPT ==  `eval echo \${SYS_PROC_TWEAK[$j]}` ] ; then
-        # Now i have 3 value as the preset, return his number
-        return $j
-      fi
-    fi
-  fi
-  j=$(($j+1))
-done
+	j=1
+	for i in powersave conservative ondemand performance ; do
+		if [ $gov_value == `eval echo \${CPU_GOV[$j]}` ] ; then
+			# Check if the she preset is the same as the current value
+			she_name2number $(eval echo \${SHE[$j]})
+			if [ "$she_value" == "$PRESET_SHE_NUM" ] ; then
+				# Check one of the value modified by sys_proc_tweaks
+				SPT="no" && [ `cat /proc/sys/vm/laptop_mode` == 5 ] && SPT="yes"
+					if [ $SPT ==  `eval echo \${SYS_PROC_TWEAK[$j]}` ] ; then
+						# Now i have 3 value as the preset, return his number
+						return $j
+					fi
+			fi
+		fi
+		j=$(($j+1))
+	done
 }
 
 # Function that rotate the existing presets.
 preset_toggle()
 {
-check_preset
-CURRENT_PRESET=$?
-preset_old=`eval echo \${NAME[$CURRENT_PRESET]}`
+	check_preset
+	CURRENT_PRESET=$?
+	preset_old=`eval echo \${NAME[$CURRENT_PRESET]}`
 
-# I don't know how many presets are declared in .conf file
-# Dynamic creation of the next preset number:
-NEXT_PRESET=$(( ($CURRENT_PRESET%$preset_num) + 1 ))
-preset_new=`eval echo \${NAME[$NEXT_PRESET]}`
+	# I don't know how many presets are declared in .conf file
+	# Dynamic creation of the next preset number:
+	NEXT_PRESET=$(( ($CURRENT_PRESET%$preset_num) + 1 ))
+	preset_new=`eval echo \${NAME[$NEXT_PRESET]}`
 
-# Load next preset
-eeepc-power-manager.sh -p $preset_new
+	# Load next preset
+	eeepc-power-manager.sh -p $preset_new
 
-# Send notification
-notify preset
-# Send log
-sendlog "PRESET: $preset_old --> $preset_new"
-sendlog "== SHE: `eval echo \${SHE[$CURRENT_PRESET]}` --> `eval echo \${SHE[$NEXT_PRESET]}`"
-sendlog "== CPU: `eval echo \${CPU_GOV[$CURRENT_PRESET]}` --> `eval echo \${CPU_GOV[$NEXT_PRESET]}`"
-sendlog "== SYS_PROC_TWEAK: `eval echo \${SYS_PROC_TWEAK[$CURRENT_PRESET]}` \
---> `eval echo \${SYS_PROC_TWEAK[$NEXT_PRESET]}`"
+	# Send notification
+	notify preset
+	# Send log
+	sendlog "PRESET: $preset_old --> $preset_new"
+	sendlog "== SHE: `eval echo \${SHE[$CURRENT_PRESET]}` --> `eval echo \${SHE[$NEXT_PRESET]}`"
+	sendlog "== CPU: `eval echo \${CPU_GOV[$CURRENT_PRESET]}` --> `eval echo \${CPU_GOV[$NEXT_PRESET]}`"
+	sendlog "== SYS_PROC_TWEAK: `eval echo \${SYS_PROC_TWEAK[$CURRENT_PRESET]}` \
+	--> `eval echo \${SYS_PROC_TWEAK[$NEXT_PRESET]}`"
 }
 
 # Function that switch all the present CPU to a governor given as $1
 apply_CPU()
 {
-  for i in $(seq 0 $((`cat /proc/cpuinfo | grep processor | wc -l`-1))) ; do
-    echo "$1" > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
-  done
+	for i in $(seq 0 $((`cat /proc/cpuinfo | grep processor | wc -l`-1))) ; do
+		echo "$1" > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
+	done
 }
 
 # Function that read the .conf file and load the right
 # CPU / SHE governor and the sys_proc tweak enable/disable
 apply_preset()
 {
-  # CPU governor:
-  apply_CPU `eval echo \${CPU_GOV[$1]}`
-  # SHE governor:
-  she_toggle `eval echo \${SHE[$1]}`
-  # Tweak some /sys and /proc entry
-  if [ `eval echo \${SYS_PROC_TWEAK[$1]}` == "yes" ] ; then
-    sh /etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh powersave
-  else
-    sh /etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh performance
-  fi
-  # Send log
-  sendlog "PRESET: --> `eval echo \${NAME[$1]}`"
-  sendlog "== SHE: --> `eval echo \${SHE[$1]}`"
-  sendlog "== CPU: --> `eval echo \${CPU_GOV[$1]}`"
-  sendlog "== SYS_PROC_TWEAK: --> `eval echo \${SYS_PROC_TWEAK[$1]}`"
+	# CPU governor:
+	apply_CPU `eval echo \${CPU_GOV[$1]}`
+	# SHE governor:
+	she_toggle `eval echo \${SHE[$1]}`
+	# Tweak some /sys and /proc entry
+	if [ `eval echo \${SYS_PROC_TWEAK[$1]}` == "yes" ] ; then
+		sh /etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh powersave
+	else
+		sh /etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh performance
+	fi
+	# Send log
+	sendlog "PRESET: --> `eval echo \${NAME[$1]}`"
+	sendlog "== SHE: --> `eval echo \${SHE[$1]}`"
+	sendlog "== CPU: --> `eval echo \${CPU_GOV[$1]}`"
+	sendlog "== SYS_PROC_TWEAK: --> `eval echo \${SYS_PROC_TWEAK[$1]}`"
 }
 
 execute()
 {
-  user
-  cmd=( "$@" )
-  if [ "${cmd:0:1}" == "@" ]; then
-    DISPLAY=:0.0 su $USER -c "${cmd:1} &"
-    echo ${cmd:1}
-  else
-    eval $cmd
-  fi
+	user
+	cmd=( "$@" )
+	if [ "${cmd:0:1}" == "@" ]; then
+		DISPLAY=:0.0 su $USER -c "${cmd:1} &"
+		echo ${cmd:1}
+	else
+		eval $cmd
+	fi
 }
 
 # Function to toggle the touchpad, via synclient (xf86-input-synaptics)
 touchpad_toggle() {
-TOUCH_STATUS=$(execute @synclient | grep TouchpadOff | awk '{print $3}')
-echo "touch = $TOUCH_STATUS"
-if [ $TOUCH_STATUS == 0 ] ; then
-  execute "@synclient TouchpadOff=1"
-  touch_not="disabled"
-  notify touchpad
-  sendlog "Touchpad disabled"
-else
-  execute "@synclient TouchpadOff=0"
-  touch_not="enabled"
-  notify touchpad
-  sendlog "Touchpad enabled"
-fi
+	TOUCH_STATUS=$(execute @synclient | grep TouchpadOff | awk '{print $3}')
+	echo "touch = $TOUCH_STATUS"
+	if [ $TOUCH_STATUS == 0 ] ; then
+		execute "@synclient TouchpadOff=1"
+		touch_not="disabled"
+		notify touchpad
+		sendlog "Touchpad disabled"
+	else
+		execute "@synclient TouchpadOff=0"
+		touch_not="enabled"
+		notify touchpad
+		sendlog "Touchpad enabled"
+	fi
 }
