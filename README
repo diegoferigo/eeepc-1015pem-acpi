@@ -24,6 +24,13 @@ git clone git://github.com/dieghen89/eeepc-1015pem-acpi.git
 cd eeepc-1015pem-acpi
 sudo ./install.sh
 
+Options:
+--prefix DIR
+
+Install all files in DIR directory. Example:
+
+sudo ./install.sh --prefix /home/user/fakeroot
+
 ##############################################################################
 
 CONFIGURE:
