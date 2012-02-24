@@ -22,51 +22,64 @@ help() {
 	echo -e "Usage: $0 [option]"
 	echo -e ""
 	echo -e "Options:"
-	echo -e "--uninstall   To remove all script in you file system"
+	echo -e "--uninstall	To remove all script in you file system"
+	echo -e "--prefix DIR	Set an alternative install dir"
+	echo -e "		(default /etc)"
 	echo -e ""
 	exit 0
 }
 
 # Parse stdin:
+args="$@"
 UNINSTALL="n"
-if [ ! $1 = "" ] ; then
+DIR=/
+
+#pick up all the parameters one by one
+until [ -z "$1" ] ; do
 	case $1 in
 		--uninstall) UNINSTALL="y" ;;
+		--prefix) shift ; DIR=$1 ;;
 		*) help ;;
 	esac
+	shift
+done
+
+if [ ! -e $DIR ] ; then
+	echo "The directory $DIR doesn't exists."
+	exit
 fi
 
 if [ ! "$UNINSTALL" = "y" ] ; then
 # Conf file
-	if [ -e /etc/conf.d/eeepc-1015pem-acpi.conf ] ; then
-		install -m 755 -D eeepc-1015pem-acpi.conf /etc/conf.d/eeepc-1015pem-acpi.conf.new
+	if [ -e $DIR/etc/conf.d/eeepc-1015pem-acpi.conf ] ; then
+		install -m 755 -D eeepc-1015pem-acpi.conf $DIR/etc/conf.d/eeepc-1015pem-acpi.conf.new
 		echo -e ">>"
 		echo -e ">> New configuration file installed as eeepc-1015pem-acpi.conf.new"
 		echo -e ">>"
 	else
 		install -m 755 -D eeepc-1015pem-acpi.conf \
-		/etc/conf.d/eeepc-1015pem-acpi.conf \
+		$DIR/etc/conf.d/eeepc-1015pem-acpi.conf \
 		&& echo -e "Installed eeepc-1015pem-acpi.conf"
   fi
 
 # Other files
 	install -m 755 -D eeepc-1015pem-acpi-handler.sh \
-		/etc/acpi/eeepc-1015pem-acpi-handler.sh  \
+		$DIR/etc/acpi/eeepc-1015pem-acpi-handler.sh  \
 		&& echo -e "Installed eeepc-1015pem-acpi-handler.sh"
 	install -m 755 -D eeepc-1015pem-acpi-functions \
-		/etc/acpi/eeepc/eeepc-1015pem-acpi-functions \
+		$DIR/etc/acpi/eeepc/eeepc-1015pem-acpi-functions \
 		&& echo -e "Installed eeepc-1015pem-acpi-functions"
 	install -m 755 -D eeepc-1015pem-acpi-events \
-		/etc/acpi/events/eeepc-1015pem-acpi-events \
+		$DIR/etc/acpi/events/eeepc-1015pem-acpi-events \
 		&& echo -e "Installed eeepc-1015pem-acpi-events"
 	install -m 755 -D eeepc-sys_proc_tweaks.sh \
-		/etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh \
+		$DIR/etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh \
 		&& echo -e "Installed eeepc-sys_proc_tweaks.sh"
 	install -m 755 -D eeepc-bootup.sh \
-		/usr/bin/eeepc-bootup.sh \
+		$DIR/usr/bin/eeepc-bootup.sh \
 		&& echo -e "Installed eeepc-bootup.sh"
 	install -m 755 -D eeepc-power-manager.sh \
-		/usr/bin/eeepc-power-manager.sh \
+		$DIR/usr/bin/eeepc-power-manager.sh \
 		&& echo -e "Installed eeepc-power-manager.sh"
 
 # Uninstall the package:
