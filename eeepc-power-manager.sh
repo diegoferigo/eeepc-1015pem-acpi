@@ -4,10 +4,10 @@
 # You can also simply write your own preset, it's simple :)  
 
 # Preset -p:
-#   powersave
-#   normal
-#   performance
-#   turbo
+#   Powersave
+#   Normal
+#   Performance
+#   Turbo
 
 # She:
 #   powersave
