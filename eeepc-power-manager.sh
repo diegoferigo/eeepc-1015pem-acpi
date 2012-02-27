@@ -53,6 +53,10 @@ help()
 	echo -e "-> powersave"
 }
 
+if [ $# == 0 ] ; then
+	help
+fi
+
 # Parse the stdin
 for i in $@ ; do
 	case $1 in
@@ -65,7 +69,7 @@ for i in $@ ; do
 						echo -e Preset `eval echo \${NAME[$j]}` loaded!
 						exit 0
 					fi
-					let "j=$j+1"
+				let "j=$j+1"
 				done
 		;;
 		-c) shift
