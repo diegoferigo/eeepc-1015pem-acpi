@@ -7,6 +7,9 @@ REQUIRED PACKAGES:
 - dmidecode: check model in install script
 - a kernel that supports frequency scaling and eeepc_laptop module
 
+For old Arch Linux setups you need all dependencies of:
+- xorg-server-utils [1]
+
 CONFIG_CPU_FREQ
 CONFIG_CPU_FREQ_TABLE
 CONFIG_CPU_FREQ_GOV_PERFORMANCE
@@ -70,3 +73,5 @@ Credits to:
 	http://linux4netbook.blogspot.com/2010/10/howto-creiamoci-i-nostri-script-acpi.html
 - LessWatts: 
 	http://www.lesswatts.org/tips/
+
+[1] http://www.archlinux.org/packages/extra/any/xorg-server-utils/
