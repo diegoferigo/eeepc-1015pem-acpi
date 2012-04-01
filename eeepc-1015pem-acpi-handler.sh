@@ -72,14 +72,14 @@ case "$1" in
 			AC|AC0|ACAD|ADP0)
 				case "$4" in
 					00000000)	sendlog "AC cable unplugged"
-										sendlog "Switch to powersave settings"
-										$ACTION_AC_UNPLUG
-										$ADDITIONAL_AC_UNPLUG
+										sendlog "Switch to battery settings"
+										eeepc-power-manager.sh -p $PRESET_AC_UNPLUG
+										execute $ACTION_AC_UNPLUG
 					;;
 					00000001)	sendlog "AC cable plugged"
-										sendlog "Switch to performance settings"
-										$ACTION_AC_PLUG
-										$ADDITIONAL_AC_PLUG
+										sendlog "Switch to AC power settings"
+										eeepc-power-manager.sh -p $PRESET_AC_PLUG
+										execute $ACTION_AC_PLUG
 					;;
 				esac
 				;;
