@@ -113,49 +113,16 @@ she_toggle() {
 	fi
 }
 
-# Converts the name of the she governor into his 0x30X number
-she_name2number()
-{
-	case $1 in
-		performance) PRESET_SHE_NUM="0x300" ;;
-		normal) PRESET_SHE_NUM="0x301" ;;
-		powersave) PRESET_SHE_NUM="0x302";;
-	esac
-}
-
-# Returns the number of the preset, for example 3 for the Performance preset
-# The check method is a bit crude :)
-check_preset() #TODO gestire il profilo non trovato
-{
-# First thing, check the preset with the current governor
-	j=1
-	for i in powersave conservative ondemand performance ; do
-		if [ $gov_value == `eval echo \${CPU_GOV[$j]}` ] ; then
-			# Check if the she preset is the same as the current value
-			she_name2number $(eval echo \${SHE[$j]})
-			if [ "$she_value" == "$PRESET_SHE_NUM" ] ; then
-				# Check one of the value modified by sys_proc_tweaks
-				SPT="no" && [ `cat /proc/sys/vm/laptop_mode` == 5 ] && SPT="yes"
-					if [ $SPT ==  `eval echo \${SYS_PROC_TWEAK[$j]}` ] ; then
-						# Now i have 3 value as the preset, return his number
-						return $j
-					fi
-			fi
-		fi
-		j=$(($j+1))
-	done
-}
-
 # Function that rotate the existing presets.
 preset_toggle()
 {
-	check_preset
-	CURRENT_PRESET=$?
+	#check_preset
+	CURRENT_PRESET=`cat /tmp/eeepc-current-preset | grep Preset | awk '{print $2}'`
 	preset_old=`eval echo \${NAME[$CURRENT_PRESET]}`
 
 	# I don't know how many presets are declared in .conf file
 	# Dynamic creation of the next preset number:
-	NEXT_PRESET=$(( ($CURRENT_PRESET%$preset_num) + 1 ))
+	NEXT_PRESET=$(( ($CURRENT_PRESET % $preset_num) + 1 % preset_num))
 	preset_new=`eval echo \${NAME[$NEXT_PRESET]}`
 
 	# Load next preset
@@ -223,6 +190,8 @@ apply_preset()
 	else
 		sh /etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh performance
 	fi
+	# Send the preset name to a temp file
+	echo -e "Preset $1 \nName `eval echo \${NAME[$1]}`" > /tmp/eeepc-current-preset
 	# Send log
 	sendlog "PRESET: --> `eval echo \${NAME[$1]}`"
 	sendlog "== SHE: --> `eval echo \${SHE[$1]}`"
