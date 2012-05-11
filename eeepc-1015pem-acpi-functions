@@ -96,7 +96,7 @@ she_toggle() {
 		;;
 		*)	echo 1 > $SHE_DIR
 				she_new="Normal"
-      	she_old=""
+      			she_old=""
 				notify she
 		;;
 		esac
@@ -174,9 +174,39 @@ preset_toggle()
 # Function that switch all the present CPU to a governor given as $1
 apply_CPU()
 {
+	cf_path=/sys/devices/system/cpu/cpufreq/
+	GOVERNOR=$1
+	[[ $1 == "conservative_lpow" || $1 == "conservative_hpow" ]] ; GOVERNOR=conservative
 	for i in $(seq 0 $((`cat /proc/cpuinfo | grep processor | wc -l`-1))) ; do
-		echo "$1" > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
+		echo $GOVERNOR > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
 	done
+
+	tweak_gov()
+	{
+		echo $UP_THRESHOLD > /sys/devices/system/cpu/cpufreq/$GOVERNOR/up_threshold
+		echo $DOWN_THRESHOLD > /sys/devices/system/cpu/cpufreq/$GOVERNOR/down_threshold
+		echo $SAMPLING_DOWN_FACTOR > /sys/devices/system/cpu/cpufreq/$GOVERNOR/sampling_down_factor
+		echo $FREQ_STEP > /sys/devices/system/cpu/cpufreq/$GOVERNOR/freq_step
+	}
+
+	case $1 in
+		conservative_lpow) # Tweaks for conservative_lpow CPU governor:
+			UP_THRESHOLD=80
+			DOWN_THRESHOLD=40
+			SAMPLING_DOWN_FACTOR=1
+			FREQ_STEP=20
+			tweak_gov
+		;;
+		conservative_hpow) # Tweaks for conservative_hpow CPU governor:
+			UP_THRESHOLD=55
+			DOWN_THRESHOLD=15 # 10 not valid
+			SAMPLING_DOWN_FACTOR=5
+			FREQ_STEP=50
+			tweak_gov
+		;;
+		*) sendlog "[WW] unknown CPU governor"
+		;;
+	esac
 }
 
 # Function that read the .conf file and load the right

@@ -62,6 +62,7 @@ FEATURES:
 - boot to powersave/performace (put eeepc-bootup.sh in /etc/rc.local)
 - presets support (manage CPU+SHE+Sys_Proc_Tweaks with easy performance profile)
 - manual switch the presets/CPU/SHE (eeepc-power-manager.sh)
+- Tweaked conservative CPU governor
 
 Credits to:
 

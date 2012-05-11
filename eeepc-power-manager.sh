@@ -73,7 +73,7 @@ for i in $@ ; do
 				done
 		;;
 		-c) shift
-				# Dynamic check of the existing governors
+				# Dynamic check of the existing governors, TODO the _hpow / _lpow
 				for gov in `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors` ; do
 					if [ $1 = $gov ] ; then 
 						apply_CPU $1
