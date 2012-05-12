@@ -171,6 +171,8 @@ apply_CPU()
 			FREQ_STEP=50
 			tweak_gov
 		;;
+		powersave|conservative|performance)
+		;;
 		*) sendlog "[WW] unknown CPU governor"
 		;;
 	esac
