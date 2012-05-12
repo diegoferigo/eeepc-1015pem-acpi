@@ -135,7 +135,7 @@ preset_toggle()
 	sendlog "== SHE: `eval echo \${SHE[$CURRENT_PRESET]}` --> `eval echo \${SHE[$NEXT_PRESET]}`"
 	sendlog "== CPU: `eval echo \${CPU_GOV[$CURRENT_PRESET]}` --> `eval echo \${CPU_GOV[$NEXT_PRESET]}`"
 	sendlog "== SYS_PROC_TWEAK: `eval echo \${SYS_PROC_TWEAK[$CURRENT_PRESET]}` \
-	--> `eval echo \${SYS_PROC_TWEAK[$NEXT_PRESET]}`"
+--> `eval echo \${SYS_PROC_TWEAK[$NEXT_PRESET]}`"
 }
 
 # Function that switch all the present CPU to a governor given as $1
