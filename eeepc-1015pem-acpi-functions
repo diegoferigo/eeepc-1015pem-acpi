@@ -116,6 +116,7 @@ she_toggle() {
 # Function that rotate the existing presets.
 preset_toggle()
 {
+	#TODO file temp non esistente
 	#check_preset
 	CURRENT_PRESET=`cat /tmp/eeepc-current-preset | grep Preset | awk '{print $2}'`
 	preset_old=`eval echo \${NAME[$CURRENT_PRESET]}`
@@ -127,6 +128,9 @@ preset_toggle()
 
 	# Load next preset
 	eeepc-power-manager.sh -p $preset_new
+
+	# Change the current preset in tmp file
+	echo -e "Preset $NEXT_PRESET \nName $preset_new" > /tmp/eeepc-current-preset
 
 	# Send notification
 	notify preset
@@ -143,7 +147,7 @@ apply_CPU()
 {
 	cf_path=/sys/devices/system/cpu/cpufreq/
 	GOVERNOR=$1
-	[[ $1 == "conservative_lpow" || $1 == "conservative_hpow" ]] ; GOVERNOR=conservative
+	[[ "$1" = "conservative_lpow" || "$1" == "conservative_hpow" ]] && GOVERNOR=conservative
 	for i in $(seq 0 $((`cat /proc/cpuinfo | grep processor | wc -l`-1))) ; do
 		echo $GOVERNOR > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
 	done
