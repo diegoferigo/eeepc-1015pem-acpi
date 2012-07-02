@@ -63,7 +63,7 @@ for i in $@ ; do
 		-p)	shift
 			#Check if the preset name exist and if so, load it
 			apply_preset $1
-			echo -e "Preset `eval echo \${NAME[$1]}` loaded!"
+			echo -e "Preset $1 loaded!"
 			exit 0
 		;;
 		-c) shift
