@@ -13,8 +13,8 @@ case "$1" in
 	# Enable laptop mode
 	echo 5 > /proc/sys/vm/laptop_mode
 
-	# Less VM disk activity. Suggested by powertop #1500
-	echo 5000 > /proc/sys/vm/dirty_writeback_centisecs
+	# Less VM disk activity. Suggested by powertop
+	echo 1500 > /proc/sys/vm/dirty_writeback_centisecs
 
 	# Intel power saving
 	echo Y > /sys/module/snd_hda_intel/parameters/power_save_controller 
@@ -59,7 +59,7 @@ case "$1" in
 	performance)
 		#Return settings to default on AC power
 		echo 0 > /proc/sys/vm/laptop_mode
-		echo 60000 > /proc/sys/vm/dirty_writeback_centisecs
+		echo 500 > /proc/sys/vm/dirty_writeback_centisecs
 		echo N > /sys/module/snd_hda_intel/parameters/power_save_controller
 		echo 0 > /sys/module/snd_hda_intel/parameters/power_save
 		for i in /sys/bus/usb/devices/*/power/autosuspend; do
