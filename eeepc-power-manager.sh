@@ -61,31 +61,26 @@ fi
 for i in $@ ; do
 	case $1 in
 		-p)	shift
-				# Check if the preset name exist and if so, load it
-				j=1
-				for name in ${NAME[*]} ; do
-					if [ "$1" == "$name" ] ; then
-						apply_preset $j
-						echo -e Preset `eval echo \${NAME[$j]}` loaded!
-						exit 0
-					fi
-				let "j=$j+1"
-				done
+			#Check if the preset name exist and if so, load it
+			apply_preset $1
+			echo -e "Preset `eval echo \${NAME[$1]}` loaded!"
+			exit 0
 		;;
 		-c) shift
-				# Dynamic check of the existing governors, TODO the _hpow / _lpow
-				for gov in `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors` ; do
-					if [ $1 = $gov ] ; then
-						apply_CPU $1
-						echo -e "CPU governor: --> $1"
-						exit 0
-					fi
-				done
+			# Dynamic check of the existing governors, TODO the _hpow / _lpow
+			for gov in `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors` ; do
+				if [ $1 = $gov ] ; then
+					apply_CPU $1
+					echo -e "CPU governor: --> $1"
+					exit 0
+				fi
+			done
 		;;
 		-s)	shift
-				she_toggle $1
-				echo -e "SHE governor --> $1"
-				exit 0
+			# valid_she
+			she_toggle $1
+			echo -e "SHE governor --> $1"
+			exit 0
 		;;
 		*) help ;;
 	esac

@@ -109,7 +109,10 @@ she_toggle() {
 			;;
 			performance) echo 0 > $SHE_DIR
 			;;
+			*) sendlog "[WW] Invalid SHE value"
+			;;
 		esac
+		sendlog "SHE: --> $1"
 	fi
 }
 
@@ -186,23 +189,26 @@ apply_CPU()
 # CPU / SHE governor and the sys_proc tweak enable/disable
 apply_preset()
 {
+	valid_preset $1
+	n=$?
 	# CPU governor:
-	apply_CPU `eval echo \${CPU_GOV[$1]}`
+	apply_CPU `eval echo \${CPU_GOV[$n]}`
 	# SHE governor:
-	she_toggle `eval echo \${SHE[$1]}`
+	she_toggle `eval echo \${SHE[$n]}`
 	# Tweak some /sys and /proc entry
-	if [ `eval echo \${SYS_PROC_TWEAK[$1]}` == "yes" ] ; then
+	if [ "`eval echo \${SYS_PROC_TWEAK[$n]}`" == "yes" ] ; then
 		sh /etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh powersave
 	else
 		sh /etc/acpi/eeepc/eeepc-sys_proc_tweaks.sh performance
 	fi
 	# Send the preset name to a temp file
-	echo -e "Preset $1 \nName `eval echo \${NAME[$1]}`" > /tmp/eeepc-current-preset
+	echo -e "Preset $n \nName `eval echo \${NAME[$n]}`" > /tmp/eeepc-current-preset
+
 	# Send log
-	sendlog "PRESET: --> `eval echo \${NAME[$1]}`"
-	sendlog "== SHE: --> `eval echo \${SHE[$1]}`"
-	sendlog "== CPU: --> `eval echo \${CPU_GOV[$1]}`"
-	sendlog "== SYS_PROC_TWEAK: --> `eval echo \${SYS_PROC_TWEAK[$1]}`"
+	sendlog "PRESET: --> `eval echo \${NAME[$n]}`"
+	sendlog "== SHE: --> `eval echo \${SHE[$n]}`"
+	sendlog "== CPU: --> `eval echo \${CPU_GOV[$n]}`"
+	sendlog "== SYS_PROC_TWEAK: --> `eval echo \${SYS_PROC_TWEAK[$n]}`"
 }
 
 execute()
@@ -233,3 +239,22 @@ touchpad_toggle() {
 		sendlog "Touchpad enabled"
 	fi
 }
+
+valid_preset()
+{
+	i=1
+	for name in ${NAME[*]} ; do
+		if [ "$1" == "$name" ] ; then
+			return $i
+		fi
+		let "i=$i+1"
+	done
+	echo "Error!"
+	sendlog "[WW] Preset $1 not valid"
+	exit 1
+}
+
+#TODO
+#valid_cpu()
+#valid_she()
+#log notification for manual calling of apply_cpu

@@ -12,9 +12,9 @@ fi
 #If the cable is plugged
 if [ "$(cat /proc/acpi/ac_adapter/AC0/state | awk '{print $2}')" = "on-line" ] ; then
 	eeepc-power-manager.sh -p $PRESET_AC_PLUG
-	sendlog "Boot to Performance profile"
+	sendlog "Boot with Performance profile"
 #If the cable is unplugged
 else
 	eeepc-power-manager.sh -p $PRESET_AC_UNPLUG
-	sendlog "Boot to Powersave profile"
+	sendlog "Boot with Powersave profile"
 fi

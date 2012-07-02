@@ -62,7 +62,7 @@ case "$1" in
   		SLPB)	sendlog "Sleep power pressed"
 						$ACTION_SLEEP   
 			;;
-			*)    sendlog "[WW] ACPI action undefined: $2"
+			*)    sendlog "[WW] ACPI action undefined: $2" #TODO mi sa che non serve
 			;;
 		esac
 	;;
