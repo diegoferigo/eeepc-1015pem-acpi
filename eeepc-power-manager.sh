@@ -77,7 +77,6 @@ for i in $@ ; do
 			done
 		;;
 		-s)	shift
-			# valid_she
 			she_toggle $1
 			echo -e "SHE governor --> $1"
 			exit 0

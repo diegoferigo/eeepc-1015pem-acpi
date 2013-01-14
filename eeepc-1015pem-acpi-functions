@@ -121,7 +121,23 @@ preset_toggle()
 {
 	#TODO file temp non esistente
 	#check_preset
+	
+	# Create the file if doesn't existing
+	if [ ! -e /tmp/eeepc-current-preset ] ; then
+	  echo -e "Preset 1\nName Powersave" > /tmp/eeepc-current-preset
+	  sendlog "Temp file not found. New fresh file created with Normal preset"
+	fi
+	
 	CURRENT_PRESET=`cat /tmp/eeepc-current-preset | grep Preset | awk '{print $2}'`
+	
+	# If the file is empty or has a wrong syntax
+	if [ a$CURRENT_PRESET = "a" ] ; then
+	  echo -e "Preset 1\nName Powersave" > /tmp/eeepc-current-preset
+	  sendlog "[WW] Temp file empty or with wrong syntax"
+	  sendlog "[WW] New fresh file created with Normal preset"
+	fi
+	
+	# Pick up the name of the current preset
 	preset_old=`eval echo \${NAME[$CURRENT_PRESET]}`
 
 	# I don't know how many presets are declared in .conf file
