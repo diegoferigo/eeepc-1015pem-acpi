@@ -14,7 +14,9 @@ case "$1" in
 	echo 5 > /proc/sys/vm/laptop_mode
 
 	# Less VM disk activity. Suggested by powertop
-	echo 1500 > /proc/sys/vm/dirty_writeback_centisecs
+	# Sleep time introduced becuse the previous command edits the writeback (to 60000) 
+	# after this echo will be executed
+	sleep 5 && echo 1500 > /proc/sys/vm/dirty_writeback_centisecs &
 
 	# Intel power saving
 	echo Y > /sys/module/snd_hda_intel/parameters/power_save_controller 
