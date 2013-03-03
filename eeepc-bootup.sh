@@ -10,7 +10,8 @@ if [ $(whoami) != "root" ] ; then
 fi
 
 #If the cable is plugged
-if [ "$(cat /proc/acpi/ac_adapter/AC0/state | awk '{print $2}')" = "on-line" ] ; then
+is_ac_plugged
+if [ $? -eq 0 ] ; then
 	eeepc-power-manager.sh -p $PRESET_AC_PLUG
 	sendlog "Boot with $PRESET_AC_PLUG profile"
 #If the cable is unplugged

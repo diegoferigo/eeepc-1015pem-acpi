@@ -270,6 +270,36 @@ valid_preset()
 	exit 1
 }
 
+is_ac_plugged()
+{
+	# Check both the places: old and new handling
+	OLD_AC=false
+	NEW_AC=false
+	if [ -e /proc/acpi/ac_adapter/AC0/state ] ; then
+		OLD_AC=true
+	elif [ -e /sys/class/power_supply/AC0/online ] ; then
+		NEW_AC=true
+	else
+		sendlog "Something wrong with the NEW/OLD_AC detection"
+		break
+	fi
+
+	# Return true if the ac cable is plugged
+	if $OLD_AC ; then
+		if [ "$(cat /proc/acpi/ac_adapter/AC0/state | awk '{print $2}')" = "on-line" ] ; then
+			echo old
+			return 0 #true
+		else
+			return 1 #false
+		fi
+	elif $NEW_AC ; then
+		if [ "$(cat /sys/class/power_supply/AC0/online)" = "1" ] ; then
+			return 0 #true
+		else
+			return 1 #false
+		fi
+	fi
+}
 #TODO
 #valid_cpu()
 #valid_she()
