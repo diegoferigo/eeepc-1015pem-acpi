@@ -111,6 +111,14 @@ case "$1" in
 			;;
 		esac
 	;;
+	
+	# New event for screen off key button
+	video/displayoff)
+		if [ "$4" = "DOFF" ] ; then
+			sendlog "Screen Off button pressed"
+			execute "$ACTION_SCREEN_CLOSED"
+		fi
+	;;
 
 	hotkey)
 		case $3 in
@@ -140,6 +148,9 @@ case "$1" in
 			$BRIGHTNESS_DOWN)
 				execute "$ACTION_BRIGHTNESS_DOWN"
 			;;
+			# The screen off acpi event with new /sys migration is
+			# handled by the video/displayoff event.
+			# This section remains here for back compatibility
 			$SCREEN_OFF)
 				sendlog "Screen Off button pressed"
 				execute "$ACTION_SCREEN_CLOSED"		
