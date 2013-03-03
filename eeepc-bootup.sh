@@ -1,13 +1,7 @@
 #!/bin/bash
 . /etc/acpi/eeepc/eeepc-1015pem-acpi-functions
 
-# Check if i have root access
-if [ $(whoami) != "root" ] ; then
-	echo -e ">>"
-	echo -e ">> You must be root to use this script"
-	echo -e ">>"
-	exit 0
-fi
+is_root
 
 #If the cable is plugged
 is_ac_plugged

@@ -34,6 +34,17 @@ for preset in ${NAME[*]} ; do
 	preset_num=$(($preset_num+1))
 done
 
+# Check if the user is root
+is_root()
+{
+	if [ $(whoami) != "root" ] ; then
+		echo -e ">>"
+		echo -e ">> You must be root to use this script"
+		echo -e ">>"
+		exit 0
+	fi
+}
+
 # Function to set the right user if not set in the conf file
 user() {
 	if [ "a$USER" = "a" ] ; then
