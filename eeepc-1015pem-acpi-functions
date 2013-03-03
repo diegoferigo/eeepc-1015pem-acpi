@@ -291,7 +291,7 @@ is_ac_plugged()
 	elif [ -e /sys/class/power_supply/AC0/online ] ; then
 		NEW_AC=true
 	else
-		sendlog "Something wrong with the NEW/OLD_AC detection"
+		sendlog "[WW] Something wrong with the NEW/OLD_AC detection"
 		break
 	fi
 
