@@ -71,7 +71,8 @@ case "$1" in
 
 	ac_adapter)
 		case "$2" in
-			AC|AC0|ACAD|ADP0)
+			# ACPI0003:00 called twice from acpid, why??
+			AC|AC0|ACAD|ADP0|ACPI0003:00)
 				case "$4" in
 					00000000)
 						sendlog "AC cable unplugged"
@@ -94,71 +95,76 @@ case "$1" in
 
 	battery|processor) ;;
 
-	button/lid)	lidstate=""
-				[ -e /proc/acpi/button/lid/LID/state ] && \
-					lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
+	button/lid)
+		lidstate=""
+		[ -e /proc/acpi/button/lid/LID/state ] && \
+			lidstate=$(cat /proc/acpi/button/lid/LID/state | awk '{print $2}')
 
-				case "$lidstate" in
-					open)
-						sendlog "Screen opened"
-						execute "$ACTION_SCREEN_OPEN"
-					;;
-	  				closed)
-						sendlog "Screen closed"
-						execute "$ACTION_SCREEN_CLOSED"
-					;;
-				esac
+		case "$lidstate" in
+			open)
+				sendlog "Screen opened"
+				execute "$ACTION_SCREEN_OPEN"
+			;;
+	  		closed)
+				sendlog "Screen closed"
+				execute "$ACTION_SCREEN_CLOSED"
+			;;
+		esac
 	;;
 
-	hotkey)	case $3 in
-				$PROFILE_TOGGLE)
-					sendlog "Profile button pressed"
-					execute "$ACTION_PROFILE_TOGGLE"   
-				;;
-				$SLEEP)
-					sendlog "Sleep button pressed"
-					execute "$ACTION_SLEEP"
-				;;
-				$WIFI_TOGGLE)
-					sendlog "Wifi button pressed"
-					execute "$ACTION_WIFI_TOGGLE"      
-				;;
-				$TOUCHPAD_TOGGLE)
-					sendlog "Touchpad button pressed"
-					execute "$ACTION_TOUCHPAD_TOGGLE"	  
-				;;
-				$ROTATE)
-					sendlog "Rotate button pressed"
-					execute "$ACTION_ROTATE"		 
-				;;
-				$BRIGHTNESS_UP)
-					execute "$ACTION_BRIGHTNESS_UP"
-				;;
-				$BRIGHTNESS_DOWN)
-					execute "$ACTION_BRIGHTNESS_DOWN"
-				;;
-				$SCREEN_OFF)
-					sendlog "Screen Off button pressed"
-					execute "$ACTION_SCREEN_CLOSED"		
-				;;
-				$RANDR_TOGGLE)
-					sendlog "Randr Toggle button pressed"
-					execute "$ACTION_RANDR_TOGGLE"
-				;;
-				$TASK)
-					sendlog "Task button pressed"
-					execute "$ACTION_TASK"
-				;;
-				$VOL_MUTE)
-					execute "$ACTION_VOL_MUTE"
-				;;
-				$VOL_DOWN)
-					execute "$ACTION_VOL_DOWN"
-				;;
-				$VOL_UP)
-					execute "$ACTION_VOL_UP"
-				;;
-			esac
+	hotkey)
+		case $3 in
+			$PROFILE_TOGGLE)
+				sendlog "Profile button pressed"
+				execute "$ACTION_PROFILE_TOGGLE"   
+			;;
+			$SLEEP)
+				sendlog "Sleep button pressed"
+				execute "$ACTION_SLEEP"
+			;;
+			$WIFI_TOGGLE)
+				sendlog "Wifi button pressed"
+				execute "$ACTION_WIFI_TOGGLE"      
+			;;
+			$TOUCHPAD_TOGGLE)
+				sendlog "Touchpad button pressed"
+				execute "$ACTION_TOUCHPAD_TOGGLE"	  
+			;;
+			$ROTATE)
+				sendlog "Rotate button pressed"
+				execute "$ACTION_ROTATE"		 
+			;;
+			$BRIGHTNESS_UP)
+				execute "$ACTION_BRIGHTNESS_UP"
+			;;
+			$BRIGHTNESS_DOWN)
+				execute "$ACTION_BRIGHTNESS_DOWN"
+			;;
+			$SCREEN_OFF)
+				sendlog "Screen Off button pressed"
+				execute "$ACTION_SCREEN_CLOSED"		
+			;;
+			$RANDR_TOGGLE)
+				sendlog "Randr Toggle button pressed"
+				execute "$ACTION_RANDR_TOGGLE"
+			;;
+			$TASK)
+				sendlog "Task button pressed"
+				execute "$ACTION_TASK"
+			;;
+			$VOL_MUTE)
+				execute "$ACTION_VOL_MUTE"
+			;;
+			$VOL_DOWN)
+				execute "$ACTION_VOL_DOWN"
+			;;
+			$VOL_UP)
+				execute "$ACTION_VOL_UP"
+			;;
+			# New ac-plug/unplug event from /proc to /sys migration 
+			ASUS010:00) 
+			;;
+		esac
 	;;
 	*)	sendlog "[WW] ACPI group/action undefined: $1 / $2"
 	;;
