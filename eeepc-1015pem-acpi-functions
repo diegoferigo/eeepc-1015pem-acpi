@@ -157,7 +157,7 @@ preset_toggle()
 	preset_new=`eval echo \${NAME[$NEXT_PRESET]}`
 
 	# Load next preset
-	eeepc-power-manager.sh -p $preset_new
+	apply_preset $preset_new
 
 	# Change the current preset in tmp file
 	echo -e "Preset $NEXT_PRESET \nName $preset_new" > /tmp/eeepc-current-preset
