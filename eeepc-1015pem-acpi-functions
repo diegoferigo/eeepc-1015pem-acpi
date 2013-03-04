@@ -55,12 +55,10 @@ user() {
 			sendlog "[WW] Please set your user name in"
 			sendlog "[WW] /etc/conf.d/eeepc-1015pem-acpi.conf"
 		fi
-	else 
-		if [ $(who | grep $USER | wc -l) == 0 ] ; then
-			sendlog "[WW] You have setted the wrong user in"
-			sendlog "[WW] /etc/conf.d/eeepc-1015pem-acpi.conf"
-			sendlog "[WW] or you are logged with another user"
-		fi 
+	elif [ $(who | grep $USER | wc -l) == 0 ] ; then
+		sendlog "[WW] You have setted the wrong user in"
+		sendlog "[WW] /etc/conf.d/eeepc-1015pem-acpi.conf"
+		sendlog "[WW] or you are logged with another user" 
 	fi
 }
 
@@ -69,14 +67,17 @@ user() {
 notify() {
 	user
 	case $1 in
-		touchpad) [ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'Touchpad' '$touch_not'"
-							[ $NOTIFY_DE = "qt" ] && execute "@kdialog --passivepopup '$touch_not' --title 'Touchpad'"
+		touchpad)
+			[ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'Touchpad' '$touch_not'"
+			[ $NOTIFY_DE = "qt"  ] && execute "@kdialog --passivepopup '$touch_not' --title 'Touchpad'"
 	;;
-		she)	[ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'SHE:' '$she_old --> $she_new'"
-					[ $NOTIFY_DE = "qt" ] && execute "@kdialog --passivepopup '$she_old --> $she_new' --title 'SHE:'"
+		she)
+			[ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'SHE:' '$she_old --> $she_new'"
+			[ $NOTIFY_DE = "qt"  ] && execute "@kdialog --passivepopup '$she_old --> $she_new' --title 'SHE:'"
 		;;
-		preset)	[ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'PRESET:' '$preset_old --> $preset_new'"
-						[ $NOTIFY_DE = "qt" ] && execute "@kdialog --passivepopup '$preset_old --> $preset_new' --title 'PRESET:'"
+		preset)
+			[ $NOTIFY_DE = "gtk" ] && execute "@notify-send 'PRESET:' '$preset_old --> $preset_new'"
+			[ $NOTIFY_DE = "qt"  ] && execute "@kdialog --passivepopup '$preset_old --> $preset_new' --title 'PRESET:'"
 		;;
 	esac
 }
@@ -92,33 +93,38 @@ she_toggle() {
 				she_new="Powersave"
 				she_old="Performance"
 				notify she
-		;;
+			;;
 			0x301)	# To Performance 
 				echo 0 > $SHE_DIR
 				she_new="Performance"
 				she_old="Normal"
 				notify she
-		;;
+			;;
 			0x302)	# To Normal
 				echo 1 > $SHE_DIR
 				she_new="Normal"
 				she_old="Powersave"
 				notify she
-		;;
-		*)	echo 1 > $SHE_DIR
+			;;
+			*)
+				echo 1 > $SHE_DIR
 				she_new="Normal"
       			she_old=""
 				notify she
-		;;
+			;;
 		esac
 		sendlog "SHE: $she_old --> $she_new"
+	# $1 is not empty: switch to declared she
 	else
 		case $1 in
-			powersave) echo 2 > $SHE_DIR
+			powersave)
+				echo 2 > $SHE_DIR
 			;;
-			normal) echo 1 > $SHE_DIR
+			normal)
+				echo 1 > $SHE_DIR
 			;;
-			performance) echo 0 > $SHE_DIR
+			performance)
+				echo 0 > $SHE_DIR
 			;;
 			*) sendlog "[WW] Invalid SHE value"
 			;;
