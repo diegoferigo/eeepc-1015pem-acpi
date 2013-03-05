@@ -93,7 +93,8 @@ case "$1" in
 		esac
 	;;
 
-	battery|processor) ;;
+	# Added some event actually unused. Maybe a future switch. 
+	battery|processor|video/switchmode|button/prog1|button/volumeup|button/volumedown) ;;
 
 	button/lid)
 		lidstate=""
