@@ -244,20 +244,28 @@ apply_preset()
 	sendlog "== SYS_PROC_TWEAK: --> `eval echo \${SYS_PROC_TWEAK[$n]}`"
 }
 
+# Check if the command has to be launched as user and not root
 execute()
 {
 	user
 	cmd=( "$@" )
-	if [ "${cmd:0:1}" == "@" ]; then
+
+	# Check if it's empty
+	if [ "$cmd" = ""] ; then
+		exit 0
+	fi
+
+	if [ "${cmd:0:1}" = "@" ]; then
 		DISPLAY=:0.0 su $USER -c "${cmd:1} &"
-		echo ${cmd:1}
+		#echo ${cmd:1} #TODO enable debugging messages
 	else
 		eval $cmd
 	fi
 }
 
 # Function to toggle the touchpad, via synclient (xf86-input-synaptics)
-touchpad_toggle() {
+touchpad_toggle()
+{
 	TOUCH_STATUS=$(execute @synclient | grep TouchpadOff | awk '{print $3}')
 	echo "touch = $TOUCH_STATUS"
 	if [ $TOUCH_STATUS == 0 ] ; then
@@ -271,6 +279,12 @@ touchpad_toggle() {
 		notify touchpad
 		sendlog "Touchpad enabled"
 	fi
+}
+
+suspend2ram()
+{
+	echo -n mem >/sys/power/state
+	sendlog "Suspending to ram"
 }
 
 valid_preset()

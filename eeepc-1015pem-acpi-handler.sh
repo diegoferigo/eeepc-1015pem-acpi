@@ -53,7 +53,7 @@ case "$1" in
 		case "$2" in
 			PBTN|PWRF)
 				sendlog "Button power pressed"
-				$ACTION_POWER_BUTTON
+				execute $ACTION_POWER_BUTTON
 			;;
 		esac
 	;;
@@ -62,7 +62,7 @@ case "$1" in
 		case "$2" in
   			SLPB|SBTN)
 				sendlog "Sleep power pressed"
-				$ACTION_SLEEP   
+				execute $ACTION_SLEEP
 			;;
 			*)	sendlog "[WW] ACPI action undefined: $2" #TODO mi sa che non serve
 			;;
@@ -93,7 +93,8 @@ case "$1" in
 		esac
 	;;
 
-	# Added some event actually unused. Maybe a future switch. 
+	# Added some event actually unused. Maybe a future switch
+	# (can break the compatibility with old /proc acpi handling) is someone still using old kernel?
 	battery|processor|video/switchmode|button/prog1|button/volumeup|button/volumedown) ;;
 
 	button/lid)
@@ -127,10 +128,10 @@ case "$1" in
 				sendlog "Profile button pressed"
 				execute "$ACTION_PROFILE_TOGGLE"   
 			;;
+			# Old way. Replaced by button/sleep
 			$SLEEP)
 				sendlog "Sleep button pressed"
 				execute "$ACTION_SLEEP"
-			;;
 			$WIFI_TOGGLE)
 				sendlog "Wifi button pressed"
 				execute "$ACTION_WIFI_TOGGLE"      
