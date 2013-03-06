@@ -132,6 +132,7 @@ case "$1" in
 			$SLEEP)
 				sendlog "Sleep button pressed"
 				execute "$ACTION_SLEEP"
+			;;
 			$WIFI_TOGGLE)
 				sendlog "Wifi button pressed"
 				execute "$ACTION_WIFI_TOGGLE"      

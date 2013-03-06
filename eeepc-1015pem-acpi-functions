@@ -251,7 +251,7 @@ execute()
 	cmd=( "$@" )
 
 	# Check if it's empty
-	if [ "$cmd" = ""] ; then
+	if [ "${cmd[*]}" = "" ] ; then
 		exit 0
 	fi
 
