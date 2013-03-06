@@ -95,7 +95,7 @@ case "$1" in
 
 	# Added some event actually unused. Maybe a future switch
 	# (can break the compatibility with old /proc acpi handling) is someone still using old kernel?
-	battery|processor|video/switchmode|button/prog1|button/volumeup|button/volumedown) ;;
+	battery|processor|video/switchmode|button/prog1|button/volumeup|button/volumedown|button/mute) ;;
 
 	button/lid)
 		lidstate=""
